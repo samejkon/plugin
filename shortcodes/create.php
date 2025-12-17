@@ -22,7 +22,6 @@ if (!function_exists('stc_handle_create_delivery')) {
             return $errors;
         }
 
-        // Kiểm tra user đã login chưa
         if (!stc_is_user_logged_in()) {
             $errors['general'] = esc_html__('ログインが必要です。', 'sale-time-checker');
             return $errors;
@@ -59,7 +58,6 @@ if (!function_exists('stc_handle_create_delivery')) {
             $errors['total_sales'] = esc_html__('売上合計を入力してください。', 'sale-time-checker');
         }
 
-        // Xử lý upload file
         $before_screenshot = '';
         $after_screenshot = '';
 
@@ -81,7 +79,6 @@ if (!function_exists('stc_handle_create_delivery')) {
             return $errors;
         }
 
-        // Nếu không có lỗi, lưu dữ liệu vào session và redirect sang confirm page
         $_SESSION['stc_confirm_data'] = array(
             'delivery_date' => $delivery_date,
             'start_time' => $start_time,
@@ -108,7 +105,6 @@ if (!function_exists('stc_create_shortcode')) {
     {
         $errors = stc_handle_create_delivery();
 
-        // Lấy dữ liệu từ session nếu có (khi quay lại từ confirm)
         $session_data = isset($_SESSION['stc_confirm_data']) ? $_SESSION['stc_confirm_data'] : array();
         if (function_exists('get_permalink') && get_the_ID()) {
             $current_url = get_permalink();
@@ -204,26 +200,48 @@ if (!function_exists('stc_create_shortcode')) {
                     <label class="stc-form-label">
                         <?php echo esc_html__('配信前スクリーンショット', 'sale-time-checker'); ?>
                     </label>
-                    <label class="stc-upload">
-                        <input type="file" name="before_screenshot" class="stc-upload__input" accept="image/*">
-                        <span class="stc-upload__icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M352 173.3L352 384C352 401.7 337.7 416 320 416C302.3 416 288 401.7 288 384L288 173.3L246.6 214.7C234.1 227.2 213.8 227.2 201.3 214.7C188.8 202.2 188.8 181.9 201.3 169.4L297.3 73.4C309.8 60.9 330.1 60.9 342.6 73.4L438.6 169.4C451.1 181.9 451.1 202.2 438.6 214.7C426.1 227.2 405.8 227.2 393.3 214.7L352 173.3zM320 464C364.2 464 400 428.2 400 384L480 384C515.3 384 544 412.7 544 448L544 480C544 515.3 515.3 544 480 544L160 544C124.7 544 96 515.3 96 480L96 448C96 412.7 124.7 384 160 384L240 384C240 428.2 275.8 464 320 464zM464 488C477.3 488 488 477.3 488 464C488 450.7 477.3 440 464 440C450.7 440 440 450.7 440 464C440 477.3 450.7 488 464 488z"/></svg></span>
-                        <span class="stc-upload__text">
-                            <?php echo esc_html__('アップロード', 'sale-time-checker'); ?>
-                        </span>
-                    </label>
+                    <div class="stc-upload-wrapper">
+                        <label class="stc-upload" data-upload-target="before_screenshot">
+                            <input type="file" name="before_screenshot" class="stc-upload__input" accept="image/*" data-upload-input="before_screenshot">
+                            <span class="stc-upload__icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M352 173.3L352 384C352 401.7 337.7 416 320 416C302.3 416 288 401.7 288 384L288 173.3L246.6 214.7C234.1 227.2 213.8 227.2 201.3 214.7C188.8 202.2 188.8 181.9 201.3 169.4L297.3 73.4C309.8 60.9 330.1 60.9 342.6 73.4L438.6 169.4C451.1 181.9 451.1 202.2 438.6 214.7C426.1 227.2 405.8 227.2 393.3 214.7L352 173.3zM320 464C364.2 464 400 428.2 400 384L480 384C515.3 384 544 412.7 544 448L544 480C544 515.3 515.3 544 480 544L160 544C124.7 544 96 515.3 96 480L96 448C96 412.7 124.7 384 160 384L240 384C240 428.2 275.8 464 320 464zM464 488C477.3 488 488 477.3 488 464C488 450.7 477.3 440 464 440C450.7 440 440 450.7 440 464C440 477.3 450.7 488 464 488z"/></svg></span>
+                            <span class="stc-upload__text">
+                                <?php echo esc_html__('アップロード', 'sale-time-checker'); ?>
+                            </span>
+                        </label>
+                        <div class="stc-upload-preview" data-preview="before_screenshot" style="display: none;">
+                            <img src="" alt="Preview" class="stc-upload-preview__image">
+                            <button type="button" class="stc-upload-preview__remove" data-remove="before_screenshot">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="stc-form-group">
                     <label class="stc-form-label">
                         <?php echo esc_html__('配信後スクリーンショット', 'sale-time-checker'); ?>
                     </label>
-                    <label class="stc-upload">
-                        <input type="file" name="after_screenshot" class="stc-upload__input" accept="image/*">
-                        <span class="stc-upload__icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M352 173.3L352 384C352 401.7 337.7 416 320 416C302.3 416 288 401.7 288 384L288 173.3L246.6 214.7C234.1 227.2 213.8 227.2 201.3 214.7C188.8 202.2 188.8 181.9 201.3 169.4L297.3 73.4C309.8 60.9 330.1 60.9 342.6 73.4L438.6 169.4C451.1 181.9 451.1 202.2 438.6 214.7C426.1 227.2 405.8 227.2 393.3 214.7L352 173.3zM320 464C364.2 464 400 428.2 400 384L480 384C515.3 384 544 412.7 544 448L544 480C544 515.3 515.3 544 480 544L160 544C124.7 544 96 515.3 96 480L96 448C96 412.7 124.7 384 160 384L240 384C240 428.2 275.8 464 320 464zM464 488C477.3 488 488 477.3 488 464C488 450.7 477.3 440 464 440C450.7 440 440 450.7 440 464C440 477.3 450.7 488 464 488z"/></svg></span>
-                        <span class="stc-upload__text">
-                            <?php echo esc_html__('アップロード', 'sale-time-checker'); ?>
-                        </span>
-                    </label>
+                    <div class="stc-upload-wrapper">
+                        <label class="stc-upload" data-upload-target="after_screenshot">
+                            <input type="file" name="after_screenshot" class="stc-upload__input" accept="image/*" data-upload-input="after_screenshot">
+                            <span class="stc-upload__icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M352 173.3L352 384C352 401.7 337.7 416 320 416C302.3 416 288 401.7 288 384L288 173.3L246.6 214.7C234.1 227.2 213.8 227.2 201.3 214.7C188.8 202.2 188.8 181.9 201.3 169.4L297.3 73.4C309.8 60.9 330.1 60.9 342.6 73.4L438.6 169.4C451.1 181.9 451.1 202.2 438.6 214.7C426.1 227.2 405.8 227.2 393.3 214.7L352 173.3zM320 464C364.2 464 400 428.2 400 384L480 384C515.3 384 544 412.7 544 448L544 480C544 515.3 515.3 544 480 544L160 544C124.7 544 96 515.3 96 480L96 448C96 412.7 124.7 384 160 384L240 384C240 428.2 275.8 464 320 464zM464 488C477.3 488 488 477.3 488 464C488 450.7 477.3 440 464 440C450.7 440 440 450.7 440 464C440 477.3 450.7 488 464 488z"/></svg></span>
+                            <span class="stc-upload__text">
+                                <?php echo esc_html__('アップロード', 'sale-time-checker'); ?>
+                            </span>
+                        </label>
+                        <div class="stc-upload-preview" data-preview="after_screenshot" style="display: none;">
+                            <img src="" alt="Preview" class="stc-upload-preview__image">
+                            <button type="button" class="stc-upload-preview__remove" data-remove="after_screenshot">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="stc-form-group">

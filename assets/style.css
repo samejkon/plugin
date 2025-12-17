@@ -182,7 +182,7 @@
 }
 
 .stc-live-list {
-    background-color: #e53935;
+    background-color: #E60013;
     color: #ffffff;
     padding: 5px 15px;
     border-radius: 20px;
@@ -267,7 +267,7 @@
     justify-content: center
 }
 .stc-history-button {
-    background-color: #e53935;
+    background-color: #E60013;
     color: #ffffff;
     text-align: center;
     padding: 10px 20px;
@@ -315,7 +315,7 @@
     font-size: 1.2em;
     font-weight: bold;
     margin: 20px 0 10px 0;
-    border-bottom: 3px solid #e53935;
+    border-bottom: 3px solid #E60013;
     padding-left: 10px;
 }
 .stc-history {
@@ -422,12 +422,7 @@
     cursor: pointer;
 }
 
-.stc-record-modal__title {
-    text-align: center;
-    font-size: 18px;
-    margin-bottom: 16px;
-    font-weight: bold;
-}
+
 
 .stc-record-form {
     display: grid;
@@ -454,7 +449,7 @@
 .stc-form-input:focus,
 .stc-form-textarea:focus {
     outline: none;
-    border-color: #e53935;
+    border-color: #E60013;
 }
 
 /* Make date input fully clickable by expanding the calendar icon */
@@ -492,7 +487,6 @@ input[type="date"].stc-form-input::-webkit-calendar-picker-indicator {
 }
 
 .stc-confirm-label {
-    color: #999;
     font-size: 15px;
     flex-shrink: 0;
     margin-right: 16px;
@@ -517,25 +511,27 @@ input[type="date"].stc-form-input::-webkit-calendar-picker-indicator {
 }
 
 .stc-confirm-image {
-    width: 100%;
-    max-width: 240px;
-    height: auto;
+    max-width: 200px;
+    height: 200px;
     border-radius: 12px;
 }
 
 .stc-confirm-actions {
     display: flex;
-    gap: 16px;
-    justify-content: center;
+    flex-direction: column;
+    gap: 24px;
+    align-items: center;
     margin-top: 32px;
 }
 
 .stc-confirm-actions form {
-    flex: 1;
+    width: 100%;
+    max-width: 440px;
 }
 
 .stc-confirm-btn {
     width: 100%;
+    max-width: 440px;
     padding: 16px 32px;
     border-radius: 30px;
     font-size: 16px;
@@ -545,13 +541,13 @@ input[type="date"].stc-form-input::-webkit-calendar-picker-indicator {
     transition: all 0.3s;
     text-align: center;
     text-decoration: none;
-    display: inline-block;
+    display: block;
 }
 
 .stc-confirm-btn--edit {
     background: transparent;
     color: #fff;
-    border-color: #fff;
+    border-color: #E60013;
     display: inline-block;
     box-sizing: border-box;
 }
@@ -562,14 +558,15 @@ input[type="date"].stc-form-input::-webkit-calendar-picker-indicator {
 }
 
 .stc-confirm-btn--save {
-    background: #e53935;
+    background: #E60013;
     color: #fff;
-    border-color: #e53935;
+    border-color: #E60013;
 }
 
 .stc-confirm-btn--save:hover {
-    background: #d32f2f;
-    border-color: #d32f2f;
+    background: #fff;
+    color: #E60013;
+    border-color: #E60013;
 }
 
 .stc-form-textarea {
@@ -599,7 +596,14 @@ input[type="date"].stc-form-input::-webkit-calendar-picker-indicator {
     font-size: 14px;
 }
 
+.stc-upload-wrapper {
+    position: relative;
+    width: 100%;
+}
+
 .stc-upload {
+    width: 200px;
+    height: 200px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -612,6 +616,7 @@ input[type="date"].stc-form-input::-webkit-calendar-picker-indicator {
     background: #0a0a0a;
     text-align: center;
     color: #fff;
+    transition: opacity 0.3s ease;
 }
 
 .stc-upload__input {
@@ -629,12 +634,69 @@ input[type="date"].stc-form-input::-webkit-calendar-picker-indicator {
     border: 1px solid #555;
 }
 
+.stc-upload__icon svg {
+    width: 24px;
+    height: 24px;
+    fill: #fff;
+}
+
 .stc-upload__text {
     font-size: 13px;
 }
 
+.stc-upload-preview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 200px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #000;
+}
+
+.stc-upload-preview__image {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 16px;
+}
+
+.stc-upload-preview__remove {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    padding: 0;
+    z-index: 10;
+}
+
+.stc-upload-preview__remove svg {
+    width: 18px;
+    height: 18px;
+    color: #000;
+}
+
+.stc-upload-preview__remove:hover {
+    background: #fff;
+    transform: scale(1.1);
+}
+
+.stc-upload-preview__remove:active {
+    transform: scale(0.95);
+}
+
 .stc-record-submit {
-    background: #e53935;
+    background: #E60013;
     color: #fff;
     border: none;
     border-radius: 50px;
@@ -659,26 +721,44 @@ input[type="date"].stc-form-input::-webkit-calendar-picker-indicator {
     font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial;
 }
 
-.stc-record-card {
-}
-
 .stc-record-card__head {
+    position: relative;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 20px;
 }
 
+/* Title căn giữa tuyệt đối */
+.stc-record-modal__title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    margin: 0;
+}
+
+/* Nút back dạng pill viền đỏ */
 .stc-record-back {
-    color: #e53935;
+    position: absolute;
+    left: 0;
+    padding: 6px 16px;
+    border: 1.5px solid #E60013;
+    border-radius: 999px;
+    color: #E60013;
     text-decoration: none;
     font-size: 13px;
+    line-height: 1;
+}
+
+.stc-record-back:hover {
+    background: #E60013;
+    color: #fff;
 }
 
 /* Error message style */
 .stc-error-message {
     display: block;
-    color: #e53935;
+    color: #E60013;
     font-size: 12px;
     margin-top: 4px;
     margin-bottom: 0;

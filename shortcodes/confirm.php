@@ -4,9 +4,6 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-/**
- * Xử lý lưu dữ liệu sau khi confirm
- */
 if (!function_exists('stc_handle_confirm_save')) {
     function stc_handle_confirm_save()
     {
@@ -20,7 +17,6 @@ if (!function_exists('stc_handle_confirm_save')) {
             return;
         }
 
-        // Kiểm tra user đã login chưa
         if (!stc_is_user_logged_in()) {
             return;
         }
@@ -28,7 +24,6 @@ if (!function_exists('stc_handle_confirm_save')) {
         $current_user = stc_get_current_user();
         $user_id = $current_user['id'];
 
-        // Lấy dữ liệu từ POST
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $delivery_date = isset($_POST['delivery_date']) ? sanitize_text_field(wp_unslash($_POST['delivery_date'])) : '';
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
@@ -44,7 +39,6 @@ if (!function_exists('stc_handle_confirm_save')) {
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $memo = isset($_POST['memo']) ? sanitize_textarea_field(wp_unslash($_POST['memo'])) : '';
 
-        // Tạo delivery record mới
         $new_delivery_id = wp_insert_post([
             'post_type'   => 'stc_delivery',
             'post_title'  => $delivery_date . ' - ' . $start_time . '~' . $end_time,
@@ -52,7 +46,6 @@ if (!function_exists('stc_handle_confirm_save')) {
         ]);
 
         if ($new_delivery_id) {
-            // Lưu thông tin vào post_meta
             update_post_meta($new_delivery_id, 'user_id', $user_id);
             update_post_meta($new_delivery_id, 'delivery_date', $delivery_date);
             update_post_meta($new_delivery_id, 'start_time', $start_time);
@@ -63,10 +56,8 @@ if (!function_exists('stc_handle_confirm_save')) {
             update_post_meta($new_delivery_id, 'memo', $memo);
             update_post_meta($new_delivery_id, 'created_date', current_time('mysql'));
 
-            // Xóa session data sau khi lưu thành công
             unset($_SESSION['stc_confirm_data']);
 
-            // Redirect về my-page sau khi lưu thành công
             $redirect_url = add_query_arg('view', 'mypage');
             wp_safe_redirect($redirect_url);
             exit;
@@ -116,9 +107,6 @@ if (!function_exists('stc_confirm_shortcode')) {
                 <p class="stc-record-modal__title">
                     <?php echo esc_html__('記録の確認', 'sale-time-checker'); ?>
                 </p>
-                <a class="stc-record-back" href="<?php echo esc_url($create_url); ?>">
-                    ← <?php echo esc_html__('戻る', 'sale-time-checker'); ?>
-                </a>
             </div>
 
             <div class="stc-confirm-content">
@@ -158,13 +146,11 @@ if (!function_exists('stc_confirm_shortcode')) {
             </div>
 
             <div class="stc-confirm-actions">
-                <!-- Link để quay lại edit (dữ liệu vẫn trong session) -->
                 <a href="<?php echo esc_url($create_url); ?>" class="stc-confirm-btn stc-confirm-btn--edit">
                     <?php echo esc_html__('修正', 'sale-time-checker'); ?>
                 </a>
 
-                <!-- Form để lưu vào database -->
-                <form method="post" style="flex: 1;">
+                <form method="post">
                     <?php wp_nonce_field('stc_confirm_action', 'stc_confirm_nonce'); ?>
                     <input type="hidden" name="delivery_date" value="<?php echo esc_attr($delivery_date); ?>">
                     <input type="hidden" name="start_time" value="<?php echo esc_attr($start_time); ?>">
