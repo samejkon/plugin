@@ -154,6 +154,7 @@ $shortcode_files = array(
     __DIR__ . '/shortcodes/update.php',
     __DIR__ . '/shortcodes/rankings.php',
     __DIR__ . '/shortcodes/profile.php',
+    __DIR__ . '/shortcodes/user-widget.php',
 );
 
 foreach ($shortcode_files as $file) {
