@@ -36,20 +36,36 @@ document.addEventListener("DOMContentLoaded", function () {
     const dateInputs = document.querySelectorAll('input[type="date"]');
     
     dateInputs.forEach(function(input) {
-        input.addEventListener('click', function() {
+        input.addEventListener('click', function(e) {
+            // Prevent default to avoid any interference
+            const self = this;
+            
             // Use showPicker() if available (modern browsers)
-            if (typeof this.showPicker === 'function') {
-                try {
-                    this.showPicker();
-                } catch (error) {
-                    // Fallback: just focus on the input
-                    this.focus();
-                }
-            } else {
-                // Fallback for older browsers
-                this.focus();
+            if (typeof self.showPicker === 'function') {
+                // Small delay to ensure the input is focused first
+                setTimeout(function() {
+                    try {
+                        self.showPicker();
+                    } catch (error) {
+                        console.log('showPicker not available:', error);
+                    }
+                }, 10);
+            }
+        });
+        
+        // Also try on focus event
+        input.addEventListener('focus', function(e) {
+            const self = this;
+            if (typeof self.showPicker === 'function') {
+                setTimeout(function() {
+                    try {
+                        self.showPicker();
+                    } catch (error) {
+                        console.log('showPicker not available:', error);
+                    }
+                }, 10);
             }
         });
     });
-});
 
+});

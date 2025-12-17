@@ -122,6 +122,10 @@ if (!function_exists('stc_manager_shortcode')) {
                 echo do_shortcode('[stc_create]');
                 break;
 
+            case 'confirm':
+                echo do_shortcode('[stc_confirm]');
+                break;
+
             case 'update':
                 echo do_shortcode('[stc_update]');
                 break;

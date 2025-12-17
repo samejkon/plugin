@@ -52,6 +52,42 @@ if (!function_exists('stc_register_user_post_type')) {
 }
 
 /**
+ * Register post type for delivery records
+ */
+if (!function_exists('stc_register_delivery_post_type')) {
+    function stc_register_delivery_post_type()
+    {
+        $labels = array(
+            'name'               => 'Delivery Records',
+            'singular_name'      => 'Delivery Record',
+            'menu_name'          => 'Delivery Records',
+            'name_admin_bar'     => 'Delivery Record',
+            'add_new'            => 'Add New',
+            'add_new_item'       => 'Add New Delivery Record',
+            'edit_item'          => 'Edit Delivery Record',
+            'new_item'           => 'New Delivery Record',
+            'all_items'          => 'All Delivery Records',
+            'view_item'          => 'View Delivery Record',
+            'search_items'       => 'Search Delivery Records',
+        );
+
+        $args = array(
+            'labels'             => $labels,
+            'public'             => false,
+            'show_ui'            => true,
+            'show_in_menu'       => true,
+            'menu_icon'          => 'dashicons-video-alt3',
+            'supports'           => array('title'),
+            'capability_type'    => 'post',
+            'has_archive'        => false,
+        );
+
+        register_post_type('stc_delivery', $args);
+    }
+    add_action('init', 'stc_register_delivery_post_type');
+}
+
+/**
  * Start session cho login
  */
 if (!function_exists('stc_start_session')) {
@@ -116,6 +152,7 @@ $shortcode_files = array(
     __DIR__ . '/shortcodes/login.php',
     __DIR__ . '/shortcodes/my-page.php',
     __DIR__ . '/shortcodes/create.php',
+    __DIR__ . '/shortcodes/confirm.php',
     __DIR__ . '/shortcodes/update.php',
 );
 

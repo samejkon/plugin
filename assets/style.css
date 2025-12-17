@@ -457,6 +457,121 @@
     border-color: #e53935;
 }
 
+/* Make date input fully clickable by expanding the calendar icon */
+input[type="date"].stc-form-input {
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+input[type="date"].stc-form-input::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    z-index: 2;
+}
+
+/* Confirmation Page Styles */
+.stc-confirm-content {
+    margin-bottom: 24px;
+}
+
+.stc-confirm-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-bottom: 1px solid #333;
+}
+
+.stc-confirm-row:last-child {
+    border-bottom: none;
+}
+
+.stc-confirm-label {
+    color: #999;
+    font-size: 15px;
+    flex-shrink: 0;
+    margin-right: 16px;
+    min-width: 120px;
+}
+
+.stc-confirm-value {
+    color: #fff;
+    font-size: 15px;
+    text-align: right;
+    word-break: break-word;
+    flex: 1;
+}
+
+.stc-confirm-row--image {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.stc-confirm-row--image .stc-confirm-label {
+    margin-bottom: 12px;
+}
+
+.stc-confirm-image {
+    width: 100%;
+    max-width: 240px;
+    height: auto;
+    border-radius: 12px;
+}
+
+.stc-confirm-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 32px;
+}
+
+.stc-confirm-actions form {
+    flex: 1;
+}
+
+.stc-confirm-btn {
+    width: 100%;
+    padding: 16px 32px;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 2px solid;
+    transition: all 0.3s;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.stc-confirm-btn--edit {
+    background: transparent;
+    color: #fff;
+    border-color: #fff;
+    display: inline-block;
+    box-sizing: border-box;
+}
+
+.stc-confirm-btn--edit:hover {
+    background: #fff;
+    color: #000;
+}
+
+.stc-confirm-btn--save {
+    background: #e53935;
+    color: #fff;
+    border-color: #e53935;
+}
+
+.stc-confirm-btn--save:hover {
+    background: #d32f2f;
+    border-color: #d32f2f;
+}
+
 .stc-form-textarea {
     border-radius: 12px;
     resize: vertical;
@@ -541,18 +656,10 @@
     min-height: 100vh;
     background: #000;
     color: #fff;
-    padding: 24px 12px 40px;
     font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial;
 }
 
 .stc-record-card {
-    max-width: 520px;
-    margin: 0 auto;
-    background: #0b0b0b;
-    border: 1px solid #333;
-    border-radius: 18px;
-    padding: 24px 18px 28px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
 }
 
 .stc-record-card__head {
@@ -581,19 +688,34 @@
     margin-bottom: 16px;
 }
 
-/* Date input improvements */
+/* Date input improvements - Make entire input clickable to open calendar */
 input[type="date"] {
     cursor: pointer;
     position: relative;
 }
 
+/* Expand the calendar picker indicator to cover the entire input */
 input[type="date"]::-webkit-calendar-picker-indicator {
-    cursor: pointer;
     position: absolute;
-    right: 0;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
+    cursor: pointer;
+    opacity: 0;
+}
+
+/* For Firefox */
+input[type="date"]::-moz-calendar-picker-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
     opacity: 0;
 }
