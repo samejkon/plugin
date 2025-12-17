@@ -25,6 +25,10 @@ if (!function_exists('stc_handle_confirm_save')) {
         $user_id = $current_user['id'];
 
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $mode = isset($_POST['mode']) ? sanitize_text_field(wp_unslash($_POST['mode'])) : 'create';
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $delivery_id = isset($_POST['delivery_id']) ? intval($_POST['delivery_id']) : 0;
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $delivery_date = isset($_POST['delivery_date']) ? sanitize_text_field(wp_unslash($_POST['delivery_date'])) : '';
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $start_time = isset($_POST['start_time']) ? sanitize_text_field(wp_unslash($_POST['start_time'])) : '';
@@ -39,28 +43,66 @@ if (!function_exists('stc_handle_confirm_save')) {
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $memo = isset($_POST['memo']) ? sanitize_textarea_field(wp_unslash($_POST['memo'])) : '';
 
-        $new_delivery_id = wp_insert_post([
-            'post_type'   => 'stc_delivery',
-            'post_title'  => $delivery_date . ' - ' . $start_time . '~' . $end_time,
-            'post_status' => 'publish',
-        ]);
+        if ($mode === 'update' && $delivery_id) {
+            // Update existing post
+            wp_update_post([
+                'ID' => $delivery_id,
+                'post_title' => $delivery_date . ' - ' . $start_time . '~' . $end_time,
+            ]);
 
-        if ($new_delivery_id) {
-            update_post_meta($new_delivery_id, 'user_id', $user_id);
-            update_post_meta($new_delivery_id, 'delivery_date', $delivery_date);
-            update_post_meta($new_delivery_id, 'start_time', $start_time);
-            update_post_meta($new_delivery_id, 'end_time', $end_time);
-            update_post_meta($new_delivery_id, 'total_sales', $total_sales);
-            update_post_meta($new_delivery_id, 'before_screenshot', $before_screenshot);
-            update_post_meta($new_delivery_id, 'after_screenshot', $after_screenshot);
-            update_post_meta($new_delivery_id, 'memo', $memo);
-            update_post_meta($new_delivery_id, 'created_date', current_time('mysql'));
+            update_post_meta($delivery_id, 'delivery_date', $delivery_date);
+            update_post_meta($delivery_id, 'start_time', $start_time);
+            update_post_meta($delivery_id, 'end_time', $end_time);
+            update_post_meta($delivery_id, 'total_sales', $total_sales);
+            update_post_meta($delivery_id, 'before_screenshot', $before_screenshot);
+            update_post_meta($delivery_id, 'after_screenshot', $after_screenshot);
+            update_post_meta($delivery_id, 'memo', $memo);
+            update_post_meta($delivery_id, 'updated_date', current_time('mysql'));
 
             unset($_SESSION['stc_confirm_data']);
 
-            $redirect_url = add_query_arg('view', 'mypage');
+            if (function_exists('get_permalink') && get_the_ID()) {
+                $base_url = get_permalink();
+            } elseif (isset($_SERVER['REQUEST_URI'])) {
+                $base_url = strtok(home_url(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))), '?');
+            } else {
+                $base_url = home_url('/');
+            }
+            $redirect_url = add_query_arg('view', 'mypage', $base_url);
             wp_safe_redirect($redirect_url);
             exit;
+        } else {
+            // Create new post
+            $new_delivery_id = wp_insert_post([
+                'post_type'   => 'stc_delivery',
+                'post_title'  => $delivery_date . ' - ' . $start_time . '~' . $end_time,
+                'post_status' => 'publish',
+            ]);
+
+            if ($new_delivery_id) {
+                update_post_meta($new_delivery_id, 'user_id', $user_id);
+                update_post_meta($new_delivery_id, 'delivery_date', $delivery_date);
+                update_post_meta($new_delivery_id, 'start_time', $start_time);
+                update_post_meta($new_delivery_id, 'end_time', $end_time);
+                update_post_meta($new_delivery_id, 'total_sales', $total_sales);
+                update_post_meta($new_delivery_id, 'before_screenshot', $before_screenshot);
+                update_post_meta($new_delivery_id, 'after_screenshot', $after_screenshot);
+                update_post_meta($new_delivery_id, 'memo', $memo);
+                update_post_meta($new_delivery_id, 'created_date', current_time('mysql'));
+
+                unset($_SESSION['stc_confirm_data']);
+
+                if (function_exists('get_permalink') && get_the_ID()) {
+                    $base_url = get_permalink();
+                } elseif (isset($_SERVER['REQUEST_URI'])) {
+                    $base_url = strtok(home_url(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))), '?');
+                } else {
+                    $base_url = home_url('/');
+                }
+                $redirect_url = add_query_arg('view', 'mypage', $base_url);
+                wp_safe_redirect($redirect_url);
+                exit;
+            }
         }
     }
 }
@@ -76,6 +118,8 @@ if (!function_exists('stc_confirm_shortcode')) {
 
         $data = isset($_SESSION['stc_confirm_data']) ? $_SESSION['stc_confirm_data'] : array();
         
+        $mode = isset($data['mode']) ? $data['mode'] : 'create';
+        $delivery_id = isset($data['delivery_id']) ? intval($data['delivery_id']) : 0;
         $delivery_date = isset($data['delivery_date']) ? $data['delivery_date'] : '';
         $start_time = isset($data['start_time']) ? $data['start_time'] : '';
         $end_time = isset($data['end_time']) ? $data['end_time'] : '';
@@ -97,7 +141,13 @@ if (!function_exists('stc_confirm_shortcode')) {
         } else {
             $current_url = home_url('/');
         }
-        $create_url = add_query_arg('view', 'create', $current_url);
+        
+        // URL to go back to edit
+        if ($mode === 'update' && $delivery_id) {
+            $edit_url = add_query_arg(array('view' => 'update', 'id' => $delivery_id), $current_url);
+        } else {
+            $edit_url = add_query_arg('view', 'create', $current_url);
+        }
 
     ob_start();
 ?>
@@ -144,14 +194,18 @@ if (!function_exists('stc_confirm_shortcode')) {
                 </div>
                 <?php endif; ?>
             </div>
-
+                    
             <div class="stc-confirm-actions">
-                <a href="<?php echo esc_url($create_url); ?>" class="stc-confirm-btn stc-confirm-btn--edit">
+                <a href="<?php echo esc_url($edit_url); ?>" class="stc-confirm-btn stc-confirm-btn--edit">
                     <?php echo esc_html__('修正', 'sale-time-checker'); ?>
                 </a>
 
                 <form method="post">
                     <?php wp_nonce_field('stc_confirm_action', 'stc_confirm_nonce'); ?>
+                    <input type="hidden" name="mode" value="<?php echo esc_attr($mode); ?>">
+                    <?php if ($mode === 'update' && $delivery_id) : ?>
+                        <input type="hidden" name="delivery_id" value="<?php echo esc_attr($delivery_id); ?>">
+                    <?php endif; ?>
                     <input type="hidden" name="delivery_date" value="<?php echo esc_attr($delivery_date); ?>">
                     <input type="hidden" name="start_time" value="<?php echo esc_attr($start_time); ?>">
                     <input type="hidden" name="end_time" value="<?php echo esc_attr($end_time); ?>">

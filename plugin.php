@@ -110,9 +110,6 @@ if (!function_exists('stc_is_user_logged_in')) {
     }
 }
 
-/**
- * Lấy thông tin user hiện tại
- */
 if (!function_exists('stc_get_current_user')) {
     function stc_get_current_user()
     {
@@ -153,6 +150,7 @@ $shortcode_files = array(
     __DIR__ . '/shortcodes/my-page.php',
     __DIR__ . '/shortcodes/create.php',
     __DIR__ . '/shortcodes/confirm.php',
+    __DIR__ . '/shortcodes/detail.php',
     __DIR__ . '/shortcodes/update.php',
 );
 

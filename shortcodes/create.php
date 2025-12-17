@@ -80,6 +80,7 @@ if (!function_exists('stc_handle_create_delivery')) {
         }
 
         $_SESSION['stc_confirm_data'] = array(
+            'mode' => 'create',
             'delivery_date' => $delivery_date,
             'start_time' => $start_time,
             'end_time' => $end_time,
@@ -89,7 +90,14 @@ if (!function_exists('stc_handle_create_delivery')) {
             'memo' => $memo,
         );
 
-        $confirm_url = add_query_arg('view', 'confirm');
+        if (function_exists('get_permalink') && get_the_ID()) {
+            $base_url = get_permalink();
+        } elseif (isset($_SERVER['REQUEST_URI'])) {
+            $base_url = strtok(home_url(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))), '?');
+        } else {
+            $base_url = home_url('/');
+        }
+        $confirm_url = add_query_arg('view', 'confirm', $base_url);
         wp_safe_redirect($confirm_url);
         exit;
     }
@@ -124,7 +132,7 @@ if (!function_exists('stc_create_shortcode')) {
                     <?php echo esc_html__('配信内容の記録', 'sale-time-checker'); ?>
                 </p>
                 <a class="stc-record-back" href="<?php echo esc_url($my_page_url); ?>">
-                    ← <?php echo esc_html__('マイページへ戻る', 'sale-time-checker'); ?>
+                    ← <?php echo esc_html__('戻ってくる', 'sale-time-checker'); ?>
                 </a>
             </div>
 

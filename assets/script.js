@@ -91,6 +91,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 reader.onload = function(event) {
                     previewImage.src = event.target.result;
                     previewContainer.style.display = 'block';
+                    
+                    // For update page: reset remove flag since user selected new image
+                    const removeInput = document.getElementById('remove-' + uploadName.replace('_', '-'));
+                    if (removeInput) {
+                        removeInput.value = '';
+                    }
                 };
                 
                 reader.readAsDataURL(file);
@@ -108,7 +114,43 @@ document.addEventListener("DOMContentLoaded", function () {
             // Hide preview
             previewContainer.style.display = 'none';
             previewImage.src = '';
+            
+            // For update page: mark as removed
+            const removeInput = document.getElementById('remove-' + uploadName.replace('_', '-'));
+            if (removeInput) {
+                removeInput.value = '1';
+            }
         });
     });
+
+    // View More functionality
+    const viewMoreBtn = document.getElementById('stc-view-more-btn');
+    
+    if (viewMoreBtn) {
+        let currentVisible = 10;
+        const itemsPerLoad = 10;
+        
+        viewMoreBtn.addEventListener('click', function() {
+            const hiddenItems = document.querySelectorAll('.stc-history-item-hidden');
+            const totalHidden = hiddenItems.length;
+            
+            // Show next batch of items
+            let showCount = 0;
+            hiddenItems.forEach(function(item) {
+                if (showCount < itemsPerLoad) {
+                    item.classList.remove('stc-history-item-hidden');
+                    showCount++;
+                }
+            });
+            
+            currentVisible += showCount;
+            
+            // Hide button if no more hidden items
+            const remainingHidden = document.querySelectorAll('.stc-history-item-hidden');
+            if (remainingHidden.length === 0) {
+                viewMoreBtn.style.display = 'none';
+            }
+        });
+    }
 
 });

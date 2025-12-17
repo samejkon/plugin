@@ -14,6 +14,66 @@ if (!function_exists('stc_my_page_shortcode')) {
         $current_user = stc_get_current_user();
         $user_name = $current_user ? $current_user['name'] : 'Guest';
 
+        // Calculate statistics
+        $total_sales = 0;
+        $monthly_hours = 0;
+        $total_hours = 0;
+
+        if ($current_user) {
+            $user_id = $current_user['id'];
+            
+            // Get all deliveries for this user
+            $all_deliveries = new WP_Query(array(
+                'post_type' => 'stc_delivery',
+                'posts_per_page' => -1,
+                'meta_query' => array(
+                    array(
+                        'key' => 'user_id',
+                        'value' => $user_id,
+                        'compare' => '='
+                    )
+                ),
+            ));
+
+            $current_month = date('Y-m');
+
+            if ($all_deliveries->have_posts()) {
+                while ($all_deliveries->have_posts()) {
+                    $all_deliveries->the_post();
+                    $post_id = get_the_ID();
+                    
+                    $delivery_date = get_post_meta($post_id, 'delivery_date', true);
+                    $start_time = get_post_meta($post_id, 'start_time', true);
+                    $end_time = get_post_meta($post_id, 'end_time', true);
+                    $sales = get_post_meta($post_id, 'total_sales', true);
+                    
+                    // Add to total sales
+                    $total_sales += intval($sales);
+                    
+                    // Calculate hours
+                    if ($start_time && $end_time) {
+                        $start = strtotime($start_time);
+                        $end = strtotime($end_time);
+                        $hours = ($end - $start) / 3600;
+                        
+                        // Add to total hours
+                        $total_hours += $hours;
+                        
+                        // Check if this month for monthly hours
+                        if ($delivery_date && strpos($delivery_date, $current_month) === 0) {
+                            $monthly_hours += $hours;
+                        }
+                    }
+                }
+                wp_reset_postdata();
+            }
+        }
+
+        // Format sales (万 = 10,000)
+        $total_sales_man = number_format($total_sales / 10000, 1);
+        $monthly_hours_formatted = number_format($monthly_hours, 0);
+        $total_hours_formatted = number_format($total_hours, 0);
+
     ob_start();
 ?>
     <div class="stc-wrapper">
@@ -36,15 +96,15 @@ if (!function_exists('stc_my_page_shortcode')) {
 
             <div class="stc-stats-grid">
                 <div class="stc-stat-item">
-                    <p class="stc-stat-value">¥0,000万</p>
+                    <p class="stc-stat-value">¥<?php echo esc_html(number_format($total_sales)); ?></p>
                     <span class="stc-stat-label"><?php echo esc_html__('売上', 'sale-time-checker'); ?></span>
                 </div>
                 <div class="stc-stat-item">
-                    <p class="stc-stat-value">000</p>
+                    <p class="stc-stat-value"><?php echo esc_html($monthly_hours_formatted); ?></p>
                     <span class="stc-stat-label"><?php echo esc_html__('配信時間', 'sale-time-checker'); ?></span>
                 </div>
                 <div class="stc-stat-item">
-                    <p class="stc-stat-value">000</p>
+                    <p class="stc-stat-value"><?php echo esc_html($total_hours_formatted); ?></p>
                     <span class="stc-stat-label"><?php echo esc_html__('累計配信時間', 'sale-time-checker'); ?></span>
                 </div>
             </div>
@@ -68,18 +128,82 @@ if (!function_exists('stc_my_page_shortcode')) {
                 </div>
 
                 <div class="stc-history-body">
-                    <div class="stc-history-item">
-                        <div class="stc-history-date">2025/12/25</div>
-                        <div class="stc-history-time">12:00～14:00</div>
-                        <div class="stc-history-sales">¥2,000,000</div>
-                        <div class="stc-history-action">
-                            <a href="#" class="stc-detail-button">
-                                <?php echo esc_html__('詳細', 'sale-time-checker'); ?>
-                            </a>
-                        </div>
-                    </div>
+                    <?php
+                    $current_user = stc_get_current_user();
+                    if ($current_user) {
+                        $user_id = $current_user['id'];
+                        
+                        $args = array(
+                            'post_type' => 'stc_delivery',
+                            'posts_per_page' => -1,
+                            'meta_query' => array(
+                                array(
+                                    'key' => 'user_id',
+                                    'value' => $user_id,
+                                    'compare' => '='
+                                )
+                            ),
+                            'orderby' => 'meta_value',
+                            'meta_key' => 'delivery_date',
+                            'order' => 'DESC'
+                        );
+                        
+                        $deliveries = new WP_Query($args);
+                        $total_count = $deliveries->found_posts;
+                        
+                        if ($deliveries->have_posts()) {
+                            $index = 0;
+                            while ($deliveries->have_posts()) {
+                                $deliveries->the_post();
+                                $post_id = get_the_ID();
+                                
+                                $delivery_date = get_post_meta($post_id, 'delivery_date', true);
+                                $start_time = get_post_meta($post_id, 'start_time', true);
+                                $end_time = get_post_meta($post_id, 'end_time', true);
+                                $total_sales = get_post_meta($post_id, 'total_sales', true);
+                                
+                                $formatted_date = $delivery_date ? date('Y/m/d', strtotime($delivery_date)) : '';
+                                $time_range = $start_time && $end_time ? $start_time . '～' . $end_time : '';
+                                $formatted_sales = $total_sales ? '¥' . number_format($total_sales) : '¥0';
+                                
+                                $detail_url = add_query_arg(array('view' => 'detail', 'id' => $post_id));
+                                
+                                $item_class = $index >= 10 ? 'stc-history-item stc-history-item-hidden' : 'stc-history-item';
+                                $index++;
+                                ?>
+                                <div class="<?php echo esc_attr($item_class); ?>">
+                                    <div class="stc-history-date"><?php echo esc_html($formatted_date); ?></div>
+                                    <div class="stc-history-time"><?php echo esc_html($time_range); ?></div>
+                                    <div class="stc-history-sales"><?php echo esc_html($formatted_sales); ?></div>
+                                    <div class="stc-history-action">
+                                        <a href="<?php echo esc_url($detail_url); ?>" class="stc-detail-button">
+                                            <?php echo esc_html__('詳細', 'sale-time-checker'); ?>
+                                        </a>
+                                    </div>
+                                </div>
+                                <?php
+                            }
+                            wp_reset_postdata();
+                        } else {
+                            $total_count = 0;
+                            ?>
+                            <div class="stc-history-empty">
+                                <p><?php echo esc_html__('配信履歴がありません。', 'sale-time-checker'); ?></p>
+                            </div>
+                            <?php
+                        }
+                    }
+                    ?>
                 </div>
             </div>
+            
+            <?php if (isset($total_count) && $total_count > 10) : ?>
+            <div class="stc-view-more-container">
+                <button class="stc-view-more-btn" id="stc-view-more-btn">
+                    VIEW MORE
+                </button>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
 <?php
@@ -124,6 +248,10 @@ if (!function_exists('stc_manager_shortcode')) {
 
             case 'confirm':
                 echo do_shortcode('[stc_confirm]');
+                break;
+
+            case 'detail':
+                echo do_shortcode('[stc_detail]');
                 break;
 
             case 'update':

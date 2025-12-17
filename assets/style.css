@@ -1,6 +1,10 @@
+/* Google Font - Cabin */
+@import url('https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&display=swap');
+
 /* RESET */
 * {
     box-sizing: border-box;
+    font-family: 'Cabin', sans-serif;
 }
 
 /* --- LOGIN WRAPPER & APP WRAPPER (CONTAINER) --- */
@@ -10,7 +14,6 @@
     min-height: 100vh;
     background: #000;
     color: #fff;
-    font-family: sans-serif;
     position: relative;
     max-width: 400px;
     margin: 0 auto;
@@ -276,6 +279,48 @@
     font-size: 1em;
 }
 
+.stc-history-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+}
+
+.stc-history-empty p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.stc-history-item-hidden {
+    display: none;
+}
+
+.stc-view-more-container {
+    text-align: center;
+    padding: 24px 0;
+}
+
+.stc-view-more-btn {
+    padding: 12px 48px;
+    border: 2px solid #E60013;
+    border-radius: 999px;
+    background: transparent;
+    color: #E60013;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 0.5px;
+}
+
+.stc-view-more-btn:hover {
+    background: #E60013;
+    color: #fff;
+}
+
+.stc-view-more-btn:active {
+    transform: scale(0.95);
+}
+
 /* --- HISTORY --- */
 
 .stc-history h3 {
@@ -479,7 +524,6 @@ input[type="date"].stc-form-input::-webkit-calendar-picker-indicator {
     display: flex;
     justify-content: space-between;
     padding: 16px 0;
-    border-bottom: 1px solid #333;
 }
 
 .stc-confirm-row:last-child {
@@ -526,12 +570,12 @@ input[type="date"].stc-form-input::-webkit-calendar-picker-indicator {
 
 .stc-confirm-actions form {
     width: 100%;
-    max-width: 440px;
+    max-width: 220px;
 }
 
 .stc-confirm-btn {
     width: 100%;
-    max-width: 440px;
+    max-width: 220px;
     padding: 16px 32px;
     border-radius: 30px;
     font-size: 16px;
@@ -729,6 +773,16 @@ input[type="date"].stc-form-input::-webkit-calendar-picker-indicator {
     margin-bottom: 20px;
 }
 
+/* Khi có title */
+.stc-record-card__head:has(.stc-record-modal__title) {
+    justify-content: center;
+}
+
+/* Khi không có title (detail page) */
+.stc-record-card__head:not(:has(.stc-record-modal__title)) {
+    justify-content: flex-start;
+}
+
 /* Title căn giữa tuyệt đối */
 .stc-record-modal__title {
     font-size: 18px;
@@ -739,8 +793,6 @@ input[type="date"].stc-form-input::-webkit-calendar-picker-indicator {
 
 /* Nút back dạng pill viền đỏ */
 .stc-record-back {
-    position: absolute;
-    left: 0;
     padding: 6px 16px;
     border: 1.5px solid #E60013;
     border-radius: 999px;
@@ -748,6 +800,11 @@ input[type="date"].stc-form-input::-webkit-calendar-picker-indicator {
     text-decoration: none;
     font-size: 13px;
     line-height: 1;
+}
+
+.stc-record-card__head:has(.stc-record-modal__title) .stc-record-back {
+    position: absolute;
+    left: 0;
 }
 
 .stc-record-back:hover {
