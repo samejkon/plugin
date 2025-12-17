@@ -1,305 +1,933 @@
 /* Google Font - Cabin */
-@import url('https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&display=swap");
 
 /* RESET */
 * {
-    box-sizing: border-box;
-    font-family: 'Cabin', sans-serif;
+  box-sizing: border-box;
+  font-family: "Cabin", sans-serif;
 }
 
 /* --- LOGIN WRAPPER & APP WRAPPER (CONTAINER) --- */
 
-/* Gộp .stc-login-wrapper (Lần 1 & 2) */
 .stc-login-wrapper {
-    min-height: 100vh;
-    background: #000;
-    color: #fff;
-    position: relative;
-    max-width: 400px;
-    margin: 0 auto;
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+  position: relative;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
 /* LOGIN TITLE */
 .stc-login-wrapper .title {
-    text-align: center;
-    font-size: 26px;
-    font-weight: 600;
-    margin-bottom: 48px;
+  text-align: center;
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 48px;
 }
 
 /* FIELD */
 .login-field {
-    margin-bottom: 28px;
+  margin-bottom: 28px;
 }
 
 .login-field label {
-    display: block;
-    font-size: 15px;
-    margin-bottom: 10px;
-    color: #fff;
+  display: block;
+  font-size: 15px;
+  margin-bottom: 10px;
+  color: #fff;
 }
 
 /* INPUT STYLE */
 .login-field input {
-    width: 100%;
-    height: 52px;
-    padding: 0 18px;
-    background: transparent;
-    border: 1.5px solid rgba(255,255,255,0.7);
-    border-radius: 30px;
-    color: #fff;
-    font-size: 15px;
+  width: 100%;
+  height: 52px;
+  padding: 0 18px;
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  border-radius: 30px;
+  color: #fff;
+  font-size: 15px;
 }
 
 .login-field input:focus {
-    outline: none;
-    border-color: #fff;
+  outline: none;
+  border-color: #fff;
 }
 
 /* FORGOT */
 .login-forgot {
-    margin-top: 12px;
+  margin-top: 12px;
 }
 
 .login-forgot a {
-    font-size: 14px;
-    color: rgba(255,255,255,0.7);
-    text-decoration: none;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
 }
 
 /* LOGIN BUTTON */
 .login-btn {
-    display: block;
-    width: 220px;
-    height: 54px;
-    margin: 100px auto 0;
-    background: #d62d20;
-    border: none;
-    border-radius: 30px;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
+  display: block;
+  width: 220px;
+  height: 54px;
+  margin: 100px auto 0;
+  background: #d62d20;
+  border: none;
+  border-radius: 30px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .login-btn:active {
-    opacity: 0.85;
+  opacity: 0.85;
 }
 
 /* LOGGED MESSAGE */
 .stc-logged {
-    text-align: center;
-    font-size: 16px;
-    padding: 40px;
+  text-align: center;
+  font-size: 16px;
+  padding: 40px;
 }
-
 
 /* APP WRAPPER */
 .stc-app {
-    min-height: 100vh;
-    background: #000;
-    color: #fff;
-    padding: 20px;
-    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial;
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
 }
 
 /* --- HEADER --- */
 
 .stc-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 2px solid #c00; 
-    padding-bottom: 10px;
-    margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid #c00;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .stc-header h2 {
-    font-size: 22px;
+  font-size: 22px;
 }
 
 .badge-live {
-    background: #c00;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 12px;
+  background: #c00;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
 }
 
 /* --- my-page & STATS --- */
 
 .stc-my-page {
-    text-align: center;
+  text-align: center;
 }
 
 .stc-my-page .avatar img {
-    border-radius: 50%;
+  border-radius: 50%;
 }
 
 .username {
-    font-size: 18px;
-    margin: 12px 0;
+  font-size: 18px;
+  margin: 12px 0;
 }
 
 .monthly .label {
-    display: inline-block;
-    font-size: 14px;
-    border-bottom: 2px solid #4da6ff;
-    padding-bottom: 2px;
-    margin-bottom: 16px;
+  display: inline-block;
+  font-size: 14px;
+  border-bottom: 2px solid #4da6ff;
+  padding-bottom: 2px;
+  margin-bottom: 16px;
 }
 
 .stats {
-    display: flex;
-    justify-content: space-between;
-    margin: 20px 0;
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
 }
 
 .stat {
-    width: 30%;
+  width: 30%;
 }
 
 .stat .value {
-    font-size: 16px;
-    display: block;
-    margin-bottom: 4px;
+  font-size: 16px;
+  display: block;
+  margin-bottom: 4px;
 }
 
 .tag.yellow {
-    background: #f5c400;
-    color: #000;
-    font-size: 12px;
-    padding: 2px 6px;
-    border-radius: 4px;
+  background: #f5c400;
+  color: #000;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
 }
 
 .stc-my-page-container {
-    background-color: #000000;
-    padding: 20px 10px;
-    position: relative;
+  background-color: #000000;
+  padding: 20px 10px;
+  position: relative;
 }
 
 .stc-title {
-    font-size: 1.8em;
-    font-weight: bold;
-    letter-spacing: 0.1em;
+  font-size: 1.8em;
+  font-weight: bold;
+  letter-spacing: 0.1em;
 }
 
 .stc-live-list {
-    background-color: #E60013;
-    color: #ffffff;
-    padding: 5px 15px;
-    border-radius: 20px;
-    font-size: 0.9em;
-    text-decoration: none;
-    font-weight: bold;
+  background-color: #e60013;
+  color: #ffffff;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 0.6em;
+  text-decoration: none;
+  font-weight: bold;
 }
 
 .stc-img-my-page-container {
-    text-align: center;
+  text-align: center;
 }
 
 .stc-my-page-image {
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #ffffff;
-    background-color: #333;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #ffffff;
+  background-color: #333;
 }
 
 .stc-my-page-name {
-    text-align: center;
-    font-size: 1.5em;
-    margin-top: 5px;
-    font-weight: bold;
+  text-align: center;
+  font-size: 1.5em;
+  margin-top: 5px;
+  font-weight: bold;
 }
 
 .stc-monthly-stats-title {
-    text-align: center;
-    font-size: 0.85em;
-    color: #ccc;
-    margin: 10px 0;
+  text-align: center;
+  font-size: 0.85em;
+  color: #ccc;
+  margin: 10px 0;
 }
 
 .stc-stats-grid {
-    display: flex;
-    justify-content: space-around;
-    text-align: center;
-    margin-bottom: 30px;
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+  margin-bottom: 30px;
 }
 
 .stc-stat-item {
-    flex: 1;
-    padding: 0 5px;
+  flex: 1;
+  padding: 0 5px;
 }
 
 .stc-stat-value {
-    font-size: 1.2em;
-    font-weight: bold;
+  font-size: 1.2em;
+  font-weight: bold;
 }
 
 .stc-stat-label {
-    width: 90%;
-    font-size: 0.7em;
-    border-radius: 5px;
-    margin-top: 5px;
-    display: inline-block;
-    font-weight: bold;
-    background-color: #ffc107;
-    color: #000;
+  width: 90%;
+  font-size: 0.7em;
+  border-radius: 5px;
+  margin-top: 5px;
+  display: inline-block;
+  font-weight: bold;
+  background-color: #ffc107;
+  color: #000;
 }
 
 /* --- BUTTONS --- */
 
 .btn-red {
-    display: inline-block;
-    background: #d62d20;
-    color: #fff;
-    padding: 14px 24px;
-    border-radius: 30px;
-    font-weight: bold;
-    text-decoration: none;
+  display: inline-block;
+  background: #d62d20;
+  color: #fff;
+  padding: 14px 24px;
+  border-radius: 30px;
+  font-weight: bold;
+  text-decoration: none;
 }
 
 .btn-red.big {
-    margin: 20px 0 30px;
+  margin: 20px 0 30px;
 }
-.btn-history{
-    align-items: center;
-    display: flex;
-    justify-content: center
+.btn-history {
+  align-items: center;
+  display: flex;
+  justify-content: center;
 }
 .stc-history-button {
-    background-color: #E60013;
-    color: #ffffff;
-    text-align: center;
-    padding: 10px 20px;
-    border-radius: 50px;
-    font-weight: bold;
-    font-size: 1em;
+  background-color: #e60013;
+  color: #ffffff;
+  text-align: center;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-weight: bold;
+  font-size: 1em;
 }
 
 .stc-history-empty {
-    text-align: center;
-    padding: 40px 20px;
-    color: #999;
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
 }
 
 .stc-history-empty p {
-    margin: 0;
-    font-size: 14px;
+  margin: 0;
+  font-size: 14px;
 }
 
 .stc-history-item-hidden {
-    display: none;
+  display: none;
 }
 
 .stc-view-more-container {
+  text-align: center;
+  padding: 24px 0;
+}
+
+.stc-view-more-btn {
+  padding: 8px 48px;
+  border: 2px solid #e60013;
+  border-radius: 999px;
+  color: #e60013;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  letter-spacing: 0.5px;
+}
+
+.stc-view-more-btn:active {
+  transform: scale(0.95);
+}
+
+/* --- HISTORY --- */
+
+.stc-history h3 {
+  border-bottom: 2px solid #c00;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.history-header,
+.history-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 60px;
+  font-size: 13px;
+  padding: 8px 0;
+}
+
+.history-header {
+  color: #aaa;
+  border-bottom: 1px solid #333;
+}
+
+.history-row {
+  border-bottom: 1px solid #222;
+}
+
+.btn-detail {
+  background: #f5c400;
+  color: #000;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.stc-history-title {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 20px 0 10px 0;
+  border-bottom: 3px solid #e60013;
+  padding-left: 10px;
+}
+.stc-history {
+  display: grid;
+  font-size: 14px;
+}
+
+.stc-history-head,
+.stc-history-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  align-items: center;
+  text-align: center;
+}
+
+.stc-history-head {
+  font-weight: bold;
+  padding-bottom: 6px;
+  text-align: center;
+}
+
+.stc-history-item {
+  padding: 8px 0;
+}
+
+.stc-history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.stc-history-date {
+  font-size: 0.9em;
+  flex: 1;
+}
+
+.stc-history-time {
+  font-size: 0.9em;
+  flex: 1;
+}
+
+.stc-history-sales {
+  font-weight: bold;
+  flex: 1;
+}
+.stc-history-action {
+  font-weight: bold;
+  flex: 1;
+  text-align: center;
+}
+
+.stc-detail-button {
+  background-color: #ffc107;
+  color: #000;
+  padding: 10px 10px;
+  border-radius: 15px;
+  text-decoration: none;
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.stc-my-page-container::before,
+.stc-my-page-container::after,
+.stc-history-button::before {
+  content: none !important;
+}
+
+/* --- RECORD MODAL --- */
+.stc-record-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.stc-record-modal.is-open {
+  display: flex;
+}
+
+.stc-record-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.stc-record-modal__dialog {
+  position: relative;
+  background: #000;
+  border: 1px solid #444;
+  border-radius: 16px;
+  padding: 20px;
+  width: 90%;
+  max-width: 420px;
+  color: #fff;
+  z-index: 1;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.stc-record-modal__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.stc-record-form {
+  display: grid;
+  gap: 14px;
+}
+
+.stc-form-label {
+  font-size: 14px;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.stc-form-input,
+.stc-form-textarea {
+  width: 100%;
+  background: #111;
+  border: 1px solid #555;
+  border-radius: 24px;
+  color: #fff;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+
+.stc-form-input:focus,
+.stc-form-textarea:focus {
+  outline: none;
+  border-color: #e60013;
+}
+
+/* Make date input fully clickable by expanding the calendar icon */
+input[type="date"].stc-form-input {
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+input[type="date"].stc-form-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  z-index: 2;
+}
+
+/* Confirmation Page Styles */
+.stc-confirm-content {
+  margin-bottom: 24px;
+}
+
+.stc-confirm-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 0;
+}
+
+.stc-confirm-row:last-child {
+  border-bottom: none;
+}
+
+.stc-confirm-label {
+  font-size: 15px;
+  flex-shrink: 0;
+  margin-right: 16px;
+  min-width: 120px;
+}
+
+.stc-confirm-value {
+  color: #fff;
+  font-size: 15px;
+  text-align: right;
+  word-break: break-word;
+  flex: 1;
+}
+
+.stc-confirm-row--image {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.stc-confirm-row--image .stc-confirm-label {
+  margin-bottom: 12px;
+}
+
+.stc-confirm-image {
+  max-width: 200px;
+  height: 200px;
+  border-radius: 12px;
+}
+
+.stc-confirm-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+  margin-top: 32px;
+  padding-bottom: 50px;
+}
+
+.stc-confirm-actions form {
+  width: 100%;
+  max-width: 220px;
+}
+
+.stc-confirm-btn {
+  width: 100%;
+  max-width: 220px;
+  padding: 12px 32px;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 2px solid;
+  transition: all 0.3s;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+}
+
+.stc-confirm-btn--edit {
+  background: transparent;
+  color: #fff;
+  border-color: #e60013;
+  display: inline-block;
+  box-sizing: border-box;
+}
+
+.stc-confirm-btn--edit:hover {
+  background: #fff;
+  color: #000;
+}
+
+.stc-confirm-btn--save {
+  background: #e60013;
+  color: #fff;
+  border-color: #e60013;
+}
+
+.stc-confirm-btn--save:hover {
+  background: #fff;
+  color: #e60013;
+  border-color: #e60013;
+}
+
+.stc-form-textarea {
+  border-radius: 12px;
+  resize: vertical;
+}
+
+.stc-form-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.stc-form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stc-form-row--amount {
+  position: relative;
+}
+
+.stc-form-suffix {
+  margin-left: 8px;
+  font-size: 14px;
+}
+
+.stc-upload-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.stc-upload {
+  width: 200px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px dashed #666;
+  border-radius: 16px;
+  padding: 24px 12px;
+  cursor: pointer;
+  background: #0a0a0a;
+  text-align: center;
+  color: #fff;
+  transition: opacity 0.3s ease;
+}
+
+.stc-upload__input {
+  display: none;
+}
+
+.stc-upload__icon {
+  font-size: 28px;
+  background: #222;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 1px solid #555;
+}
+
+.stc-upload__icon svg {
+  width: 24px;
+  height: 24px;
+  fill: #fff;
+}
+
+.stc-upload__text {
+  font-size: 13px;
+}
+
+.stc-upload-preview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 200px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000;
+}
+
+.stc-upload-preview__image {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+.stc-upload-preview__remove {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  padding: 0;
+  z-index: 10;
+}
+
+.stc-upload-preview__remove svg {
+  width: 18px;
+  height: 18px;
+  color: #000;
+}
+
+.stc-upload-preview__remove:hover {
+  background: #fff;
+  transform: scale(1.1);
+}
+
+.stc-upload-preview__remove:active {
+  transform: scale(0.95);
+}
+
+.stc-record-submit {
+  background: #e60013;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 24px;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  width: 60%;
+  margin: 0 auto;
+  display: block;
+}
+
+.stc-record-submit:active {
+  opacity: 0.9;
+}
+
+/* --- RECORD PAGE (full page) --- */
+.stc-record-page {
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+  padding: 20px;
+}
+
+.stc-record-card__head {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.stc-record-card__head:has(.stc-record-modal__title) {
+  justify-content: center;
+}
+
+.stc-record-card__head:not(:has(.stc-record-modal__title)) {
+  justify-content: flex-start;
+}
+
+.stc-record-modal__title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  margin: 0;
+}
+
+.stc-record-back {
+  padding: 6px 16px;
+  border: 1.5px solid #e60013;
+  border-radius: 999px;
+  color: #e60013;
+  text-decoration: none;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.stc-record-card__head:has(.stc-record-modal__title) .stc-record-back {
+  position: absolute;
+  left: 0;
+}
+
+.stc-record-back:hover {
+  background: #e60013;
+  color: #fff;
+}
+
+/* Error message style */
+.stc-error-message {
+  display: block;
+  color: #e60013;
+  font-size: 12px;
+  margin-top: 4px;
+  margin-bottom: 0;
+}
+
+.login-field {
+  margin-bottom: 16px;
+}
+
+/* Date input improvements - Make entire input clickable to open calendar */
+input[type="date"] {
+  cursor: pointer;
+  position: relative;
+}
+
+/* Expand the calendar picker indicator to cover the entire input */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  opacity: 0;
+}
+
+/* For Firefox */
+input[type="date"]::-moz-calendar-picker-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  opacity: 0;
+}
+.stc-live-list-button-container {
+  text-align: center;
+  margin-top: 50px;
+}
+.stc-live-list-button {
+  background-color: #e60013;
+  color: #ffffff;
+  text-align: center;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-weight: bold;
+  font-size: 1em;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 20px;
+  width: 200px;
+  margin: 100px auto;
+}
+
+.stc-record-modal__title {
+  border-bottom: 3px solid #e60013;
+}
+
+.stc-rankings-list {
+  margin-top: 40px;
+}
+
+.stc-rankings-item {
+  border: 1px solid #e60013;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.stc-rankings-grid {
+  display: grid;
+  grid-template-columns: 10% 30% 60%;
+}
+.rankings_item {
+  margin-bottom: 10px;
+}
+
+.stc-rankings-grid-item {
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stc-rankings-grid-item:nth-child(3) {
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+.stc-rankings-grid-item__image {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #ffffff;
+  background-color: #333;
+}
+
+.stc-rankings-rank-icon {
+    width: 30px;
+    height: 30px;
+}
+
+.rankings_item-hidden,
+.rankings_item-hidden-monthly,
+.rankings_item-hidden-total {
+    display: none;
+}
+
+.rankings-view-more-container {
     text-align: center;
     padding: 24px 0;
 }
 
-.stc-view-more-btn {
+.rankings-view-more-btn {
     padding: 12px 48px;
     border: 2px solid #E60013;
     border-radius: 999px;
@@ -312,547 +940,54 @@
     letter-spacing: 0.5px;
 }
 
-.stc-view-more-btn:hover {
+.rankings-view-more-btn:hover {
     background: #E60013;
     color: #fff;
 }
 
-.stc-view-more-btn:active {
+.rankings-view-more-btn:active {
     transform: scale(0.95);
 }
 
-/* --- HISTORY --- */
-
-.stc-history h3 {
-    border-bottom: 2px solid #c00;
-    padding-bottom: 8px;
-    margin-bottom: 12px;
-}
-
-.history-header,
-.history-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 60px;
-    font-size: 13px;
-    padding: 8px 0;
-}
-
-.history-header {
-    color: #aaa;
-    border-bottom: 1px solid #333;
-}
-
-.history-row {
-    border-bottom: 1px solid #222;
-}
-
-.btn-detail {
-    background: #f5c400;
-    color: #000;
-    font-size: 12px;
-    padding: 4px 8px;
-    border-radius: 12px;
+.stc-rankings-empty {
     text-align: center;
-    text-decoration: none;
-}
-
-.stc-history-title {
-    font-size: 1.2em;
-    font-weight: bold;
-    margin: 20px 0 10px 0;
-    border-bottom: 3px solid #E60013;
-    padding-left: 10px;
-}
-.stc-history {
-    display: grid;
+    padding: 40px;
+    color: #999;
     font-size: 14px;
 }
 
-.stc-history-head,
-.stc-history-item {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr auto;
-    align-items: center;
-}
-
-.stc-history-head {
-    font-weight: bold;
-    padding-bottom: 6px;
-}
-
-.stc-history-item {
-    padding: 8px 0;
-}
-
-.stc-history-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-}
-
-.stc-history-date {
-    font-size: 0.9em;
-    flex: 1;
-}
-
-.stc-history-time {
-    font-size: 0.9em;
-    flex: 1;
-}
-
-.stc-history-sales {
-    font-weight: bold;
-    flex: 1;
-}
-
-.stc-detail-button {
-    background-color: #ffc107;
-    color: #000;
-    padding: 10px 10px;
-    border-radius: 15px;
-    text-decoration: none;
-    font-size: 0.8em;
-    font-weight: bold;
-    margin-left: 10px;
-}
-
-.stc-my-page-container::before,
-.stc-my-page-container::after,
-.stc-history-button::before {
-    content: none !important;
-}
-
-/* --- RECORD MODAL --- */
-.stc-record-modal {
-    position: fixed;
-    inset: 0;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-}
-
-.stc-record-modal.is-open {
-    display: flex;
-}
-
-.stc-record-modal__backdrop {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.7);
-}
-
-.stc-record-modal__dialog {
-    position: relative;
-    background: #000;
-    border: 1px solid #444;
-    border-radius: 16px;
-    padding: 20px;
-    width: 90%;
-    max-width: 420px;
-    color: #fff;
-    z-index: 1;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-}
-
-.stc-record-modal__close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: transparent;
-    border: none;
-    color: #fff;
-    font-size: 22px;
-    cursor: pointer;
-}
-
-
-
-.stc-record-form {
-    display: grid;
-    gap: 14px;
-}
-
-.stc-form-label {
-    font-size: 14px;
-    margin-bottom: 6px;
-    display: block;
-}
-
-.stc-form-input,
-.stc-form-textarea {
-    width: 100%;
-    background: #111;
-    border: 1px solid #555;
-    border-radius: 24px;
-    color: #fff;
-    padding: 10px 14px;
-    font-size: 14px;
-}
-
-.stc-form-input:focus,
-.stc-form-textarea:focus {
-    outline: none;
-    border-color: #E60013;
-}
-
-/* Make date input fully clickable by expanding the calendar icon */
-input[type="date"].stc-form-input {
-    position: relative;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-}
-
-input[type="date"].stc-form-input::-webkit-calendar-picker-indicator {
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    z-index: 2;
-}
-
-/* Confirmation Page Styles */
-.stc-confirm-content {
-    margin-bottom: 24px;
-}
-
-.stc-confirm-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 16px 0;
-}
-
-.stc-confirm-row:last-child {
-    border-bottom: none;
-}
-
-.stc-confirm-label {
-    font-size: 15px;
-    flex-shrink: 0;
-    margin-right: 16px;
-    min-width: 120px;
-}
-
-.stc-confirm-value {
-    color: #fff;
-    font-size: 15px;
-    text-align: right;
-    word-break: break-word;
-    flex: 1;
-}
-
-.stc-confirm-row--image {
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.stc-confirm-row--image .stc-confirm-label {
-    margin-bottom: 12px;
-}
-
-.stc-confirm-image {
-    max-width: 200px;
-    height: 200px;
-    border-radius: 12px;
-}
-
-.stc-confirm-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    align-items: center;
-    margin-top: 32px;
-}
-
-.stc-confirm-actions form {
-    width: 100%;
-    max-width: 220px;
-}
-
-.stc-confirm-btn {
-    width: 100%;
-    max-width: 220px;
-    padding: 16px 32px;
-    border-radius: 30px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    border: 2px solid;
-    transition: all 0.3s;
-    text-align: center;
-    text-decoration: none;
-    display: block;
-}
-
-.stc-confirm-btn--edit {
-    background: transparent;
-    color: #fff;
-    border-color: #E60013;
-    display: inline-block;
-    box-sizing: border-box;
-}
-
-.stc-confirm-btn--edit:hover {
-    background: #fff;
-    color: #000;
-}
-
-.stc-confirm-btn--save {
-    background: #E60013;
-    color: #fff;
-    border-color: #E60013;
-}
-
-.stc-confirm-btn--save:hover {
-    background: #fff;
-    color: #E60013;
-    border-color: #E60013;
-}
-
-.stc-form-textarea {
-    border-radius: 12px;
-    resize: vertical;
-}
-
-.stc-form-row {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-}
-
-.stc-form-group {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.stc-form-row--amount {
-    position: relative;
-}
-
-.stc-form-suffix {
-    margin-left: 8px;
-    font-size: 14px;
-}
-
-.stc-upload-wrapper {
-    position: relative;
-    width: 100%;
-}
-
-.stc-upload {
-    width: 200px;
-    height: 200px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    border: 1px dashed #666;
-    border-radius: 16px;
-    padding: 24px 12px;
-    cursor: pointer;
-    background: #0a0a0a;
-    text-align: center;
-    color: #fff;
-    transition: opacity 0.3s ease;
-}
-
-.stc-upload__input {
-    display: none;
-}
-
-.stc-upload__icon {
-    font-size: 28px;
-    background: #222;
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    border: 1px solid #555;
-}
-
-.stc-upload__icon svg {
-    width: 24px;
-    height: 24px;
-    fill: #fff;
-}
-
-.stc-upload__text {
-    font-size: 13px;
-}
-
-.stc-upload-preview {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 200px;
-    height: 200px;
-    border-radius: 16px;
-    overflow: hidden;
-    background: #000;
-}
-
-.stc-upload-preview__image {
-    width: 200px;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 16px;
-}
-
-.stc-upload-preview__remove {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    padding: 0;
-    z-index: 10;
-}
-
-.stc-upload-preview__remove svg {
-    width: 18px;
-    height: 18px;
-    color: #000;
-}
-
-.stc-upload-preview__remove:hover {
-    background: #fff;
-    transform: scale(1.1);
-}
-
-.stc-upload-preview__remove:active {
-    transform: scale(0.95);
-}
-
-.stc-record-submit {
-    background: #E60013;
-    color: #fff;
-    border: none;
-    border-radius: 50px;
-    padding: 12px 24px;
-    font-weight: bold;
-    font-size: 15px;
-    cursor: pointer;
-    width: 60%;
-    margin: 0 auto;
-    display: block;
-}
-
-.stc-record-submit:active {
-    opacity: 0.9;
-}
-
-/* --- RECORD PAGE (full page) --- */
-.stc-record-page {
-    min-height: 100vh;
-    background: #000;
-    color: #fff;
-    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial;
-}
-
-.stc-record-card__head {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-/* Khi có title */
-.stc-record-card__head:has(.stc-record-modal__title) {
-    justify-content: center;
-}
-
-/* Khi không có title (detail page) */
-.stc-record-card__head:not(:has(.stc-record-modal__title)) {
-    justify-content: flex-start;
-}
-
-/* Title căn giữa tuyệt đối */
-.stc-record-modal__title {
-    font-size: 18px;
-    font-weight: bold;
-    color: #fff;
-    margin: 0;
-}
-
-/* Nút back dạng pill viền đỏ */
-.stc-record-back {
-    padding: 6px 16px;
-    border: 1.5px solid #E60013;
-    border-radius: 999px;
-    color: #E60013;
-    text-decoration: none;
-    font-size: 13px;
-    line-height: 1;
-}
-
-.stc-record-card__head:has(.stc-record-modal__title) .stc-record-back {
-    position: absolute;
-    left: 0;
-}
-
-.stc-record-back:hover {
-    background: #E60013;
-    color: #fff;
-}
-
-/* Error message style */
-.stc-error-message {
-    display: block;
-    color: #E60013;
-    font-size: 12px;
-    margin-top: 4px;
-    margin-bottom: 0;
-}
-
-.login-field {
-    margin-bottom: 16px;
-}
-
-/* Date input improvements - Make entire input clickable to open calendar */
-input[type="date"] {
-    cursor: pointer;
-    position: relative;
-}
-
-/* Expand the calendar picker indicator to cover the entire input */
-input[type="date"]::-webkit-calendar-picker-indicator {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    cursor: pointer;
-    opacity: 0;
-}
-
-/* For Firefox */
-input[type="date"]::-moz-calendar-picker-indicator {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    cursor: pointer;
-    opacity: 0;
+.rankings-view-more-container {
+  text-align: center;
+  padding: 24px 0;
+}
+
+.rankings-view-more-btn {
+  padding: 8px 48px;
+  border: 2px solid #e60013;
+  border-radius: 999px;
+  color: #e60013;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  background-color: #000;
+  letter-spacing: 0.5px;
+}
+
+.rankings-view-more-btn:active {
+  transform: scale(0.95);
+}
+.stc-btn-back-to-mypage{
+  background-color: #e60013;
+  color: #ffffff;
+  text-align: center;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-weight: bold;
+  font-size: 1em;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 20px;
+  width: 200px;
+  margin: 100px auto;
 }

@@ -80,7 +80,7 @@ if (!function_exists('stc_my_page_shortcode')) {
         <div class="stc-my-page-container">
             <div class="stc-header">
                 <p class="stc-title"><?php echo esc_html__('マイページ', 'sale-time-checker'); ?></p>
-                <a href="#" class="stc-live-list"><?php echo esc_html__('ライバーリスト', 'sale-time-checker'); ?></a>
+                <a href="<?php echo esc_url(add_query_arg('view', 'rankings')); ?>" class="stc-live-list"><?php echo esc_html__('ライバーリスト', 'sale-time-checker'); ?></a>
             </div>
 
             <div class="stc-img-my-page-container">
@@ -204,6 +204,12 @@ if (!function_exists('stc_my_page_shortcode')) {
                 </button>
             </div>
             <?php endif; ?>
+
+            <div class="stc-live-list-button-container">
+                <a href="<?php echo esc_url(add_query_arg('view', 'rankings')); ?>" class="stc-live-list-button">
+                    <?php echo esc_html__('ライバーリスト', 'sale-time-checker'); ?>
+                </a>
+            </div>
         </div>
     </div>
 <?php
@@ -256,6 +262,10 @@ if (!function_exists('stc_manager_shortcode')) {
 
             case 'update':
                 echo do_shortcode('[stc_update]');
+                break;
+
+            case 'rankings':
+                echo do_shortcode('[stc_rankings]');
                 break;
 
             case 'mypage':

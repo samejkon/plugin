@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // View More functionality
+    // View More functionality for history list
     const viewMoreBtn = document.getElementById('stc-view-more-btn');
     
     if (viewMoreBtn) {
@@ -149,6 +149,78 @@ document.addEventListener("DOMContentLoaded", function () {
             const remainingHidden = document.querySelectorAll('.stc-history-item-hidden');
             if (remainingHidden.length === 0) {
                 viewMoreBtn.style.display = 'none';
+            }
+        });
+    }
+
+    // View More functionality for sales ranking
+    const salesRankingViewMore = document.getElementById('sales-ranking-view-more');
+    
+    if (salesRankingViewMore) {
+        salesRankingViewMore.addEventListener('click', function() {
+            const hiddenItems = document.querySelectorAll('.rankings_item-hidden');
+            
+            // Show next 5 items
+            let showCount = 0;
+            hiddenItems.forEach(function(item) {
+                if (showCount < 5) {
+                    item.classList.remove('rankings_item-hidden');
+                    showCount++;
+                }
+            });
+            
+            // Hide button if no more hidden items
+            const remainingHidden = document.querySelectorAll('.rankings_item-hidden');
+            if (remainingHidden.length === 0) {
+                salesRankingViewMore.style.display = 'none';
+            }
+        });
+    }
+
+    // View More functionality for monthly hours ranking
+    const monthlyHoursViewMore = document.getElementById('monthly-hours-ranking-view-more');
+    
+    if (monthlyHoursViewMore) {
+        monthlyHoursViewMore.addEventListener('click', function() {
+            const hiddenItems = document.querySelectorAll('.rankings_item-hidden-monthly');
+            
+            // Show next 5 items
+            let showCount = 0;
+            hiddenItems.forEach(function(item) {
+                if (showCount < 5) {
+                    item.classList.remove('rankings_item-hidden-monthly');
+                    showCount++;
+                }
+            });
+            
+            // Hide button if no more hidden items
+            const remainingHidden = document.querySelectorAll('.rankings_item-hidden-monthly');
+            if (remainingHidden.length === 0) {
+                monthlyHoursViewMore.style.display = 'none';
+            }
+        });
+    }
+
+    // View More functionality for total hours ranking
+    const totalHoursViewMore = document.getElementById('total-hours-ranking-view-more');
+    
+    if (totalHoursViewMore) {
+        totalHoursViewMore.addEventListener('click', function() {
+            const hiddenItems = document.querySelectorAll('.rankings_item-hidden-total');
+            
+            // Show next 5 items
+            let showCount = 0;
+            hiddenItems.forEach(function(item) {
+                if (showCount < 5) {
+                    item.classList.remove('rankings_item-hidden-total');
+                    showCount++;
+                }
+            });
+            
+            // Hide button if no more hidden items
+            const remainingHidden = document.querySelectorAll('.rankings_item-hidden-total');
+            if (remainingHidden.length === 0) {
+                totalHoursViewMore.style.display = 'none';
             }
         });
     }
