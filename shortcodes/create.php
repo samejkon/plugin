@@ -132,7 +132,7 @@ if (!function_exists('stc_create_shortcode')) {
                     <?php echo esc_html__('配信内容の記録', 'sale-time-checker'); ?>
                 </p>
                 <a class="stc-record-back" href="<?php echo esc_url($my_page_url); ?>">
-                    ← <?php echo esc_html__('戻ってくる', 'sale-time-checker'); ?>
+                    ← <?php echo esc_html__('', 'sale-time-checker'); ?>
                 </a>
             </div>
 

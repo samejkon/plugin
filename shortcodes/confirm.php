@@ -142,7 +142,6 @@ if (!function_exists('stc_confirm_shortcode')) {
             $current_url = home_url('/');
         }
         
-        // URL to go back to edit
         if ($mode === 'update' && $delivery_id) {
             $edit_url = add_query_arg(array('view' => 'update', 'id' => $delivery_id), $current_url);
         } else {

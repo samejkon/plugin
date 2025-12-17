@@ -28,10 +28,15 @@ if (!function_exists('stc_detail_shortcode')) {
             exit;
         }
 
+        // Check if this is read-only mode (viewing other user's profile)
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $is_readonly = isset($_GET['readonly']) && $_GET['readonly'] == '1';
+        
         $current_user = stc_get_current_user();
         $post_user_id = get_post_meta($delivery_id, 'user_id', true);
 
-        if (!$current_user || $current_user['id'] != $post_user_id) {
+        // If not readonly, check ownership
+        if (!$is_readonly && (!$current_user || $current_user['id'] != $post_user_id)) {
             $redirect_url = add_query_arg('view', 'mypage');
             wp_safe_redirect($redirect_url);
             exit;
@@ -52,7 +57,14 @@ if (!function_exists('stc_detail_shortcode')) {
         } else {
             $current_url = home_url('/');
         }
-        $my_page_url = add_query_arg('view', 'mypage', $current_url);
+        
+        // If readonly, back to profile page; otherwise back to mypage
+        if ($is_readonly) {
+            $back_url = add_query_arg(array('view' => 'profile', 'user_id' => $post_user_id), strtok($current_url, '?'));
+        } else {
+            $back_url = add_query_arg('view', 'mypage', $current_url);
+        }
+        
         $update_url = add_query_arg(array('view' => 'update', 'id' => $delivery_id), $current_url);
 
     ob_start();
@@ -97,13 +109,15 @@ if (!function_exists('stc_detail_shortcode')) {
             </div>
 
             <div class="stc-confirm-actions">
-                <a href="<?php echo esc_url($my_page_url); ?>" class="stc-confirm-btn stc-confirm-btn--edit">
+                <a href="<?php echo esc_url($back_url); ?>" class="stc-confirm-btn stc-confirm-btn--edit">
                     <?php echo esc_html__('戻る', 'sale-time-checker'); ?>
                 </a>
 
+                <?php if (!$is_readonly) : ?>
                 <a href="<?php echo esc_url($update_url); ?>" class="stc-confirm-btn stc-confirm-btn--save">
                     <?php echo esc_html__('編集', 'sale-time-checker'); ?>
                 </a>
+                <?php endif; ?>
             </div>
         </div>
     </div>

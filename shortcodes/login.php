@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Xử lý đăng ký tài khoản
+ * Handle register
  */
 if (!function_exists('stc_handle_register')) {
     function stc_handle_register()
@@ -38,7 +38,6 @@ if (!function_exists('stc_handle_register')) {
         if (empty($email)) {
             $errors['email'] = esc_html__('メールアドレスを入力してください。', 'sale-time-checker');
         } else {
-            // Kiểm tra email đã tồn tại chưa
             $existing_user = new WP_Query([
                 'post_type'      => 'stc_user',
                 'meta_key'       => 'user_email',
@@ -61,12 +60,10 @@ if (!function_exists('stc_handle_register')) {
             $errors['confirm_password'] = esc_html__('パスワードが一致しません。', 'sale-time-checker');
         }
 
-        // Nếu có lỗi, return errors
         if (!empty($errors)) {
             return $errors;
         }
 
-        // Tạo user mới (giống cách form.php tạo report)
         $new_user_id = wp_insert_post([
             'post_type'   => 'stc_user',
             'post_title'  => $name,
@@ -74,13 +71,11 @@ if (!function_exists('stc_handle_register')) {
         ]);
 
         if ($new_user_id) {
-            // Lưu thông tin vào post_meta (giống cách form.php lưu report metadata)
             update_post_meta($new_user_id, 'user_name', $name);
             update_post_meta($new_user_id, 'user_email', $email);
             update_post_meta($new_user_id, 'user_password', wp_hash_password($password));
             update_post_meta($new_user_id, 'user_registered_date', current_time('mysql'));
 
-            // Set session để đăng nhập
             $_SESSION['stc_user_id'] = $new_user_id;
 
             $redirect_url = add_query_arg('view', 'mypage');
@@ -96,7 +91,7 @@ if (!function_exists('stc_handle_register')) {
 add_action('init', 'stc_handle_register');
 
 /**
- * Xử lý đăng nhập
+ * Handle login
  */
 if (!function_exists('stc_handle_login')) {
     function stc_handle_login()
@@ -130,7 +125,6 @@ if (!function_exists('stc_handle_login')) {
             return $errors;
         }
 
-        // Tìm user theo email
         $user_query = new WP_Query([
             'post_type'      => 'stc_user',
             'meta_key'       => 'user_email',
@@ -146,13 +140,11 @@ if (!function_exists('stc_handle_login')) {
         $user = $user_query->posts[0];
         $stored_password = get_post_meta($user->ID, 'user_password', true);
 
-        // Kiểm tra password
         if (!wp_check_password($password, $stored_password)) {
             $errors['password'] = esc_html__('メールアドレスまたはパスワードが正しくありません。', 'sale-time-checker');
             return $errors;
         }
 
-        // Đăng nhập thành công
         $_SESSION['stc_user_id'] = $user->ID;
 
         $redirect_url = add_query_arg('view', 'mypage');
@@ -165,19 +157,17 @@ add_action('init', 'stc_handle_login');
 /**
  * Shortcode: [stc_login]
  *
- * Giao diện login/register với switch giữa 2 form.
  */
 if (!function_exists('stc_login_shortcode')) {
     function stc_login_shortcode()
     {
         if (stc_is_user_logged_in()) {
-            return '<p class="stc-logged">You are signed in.</p>';
+            return '<p class="stc-logged">ログインしています。</p>';
         }
 
         $register_errors = stc_handle_register();
         $login_errors = stc_handle_login();
 
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $mode = isset($_GET['mode']) ? sanitize_text_field(wp_unslash($_GET['mode'])) : 'login';
         
         $register_url = add_query_arg(['view' => 'login', 'mode' => 'register']);

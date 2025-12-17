@@ -14,15 +14,13 @@ if (!function_exists('stc_my_page_shortcode')) {
         $current_user = stc_get_current_user();
         $user_name = $current_user ? $current_user['name'] : 'Guest';
 
-        // Calculate statistics
         $total_sales = 0;
-        $monthly_hours = 0;
+        $max_hours = 0;
         $total_hours = 0;
 
         if ($current_user) {
             $user_id = $current_user['id'];
             
-            // Get all deliveries for this user
             $all_deliveries = new WP_Query(array(
                 'post_type' => 'stc_delivery',
                 'posts_per_page' => -1,
@@ -35,33 +33,26 @@ if (!function_exists('stc_my_page_shortcode')) {
                 ),
             ));
 
-            $current_month = date('Y-m');
-
             if ($all_deliveries->have_posts()) {
                 while ($all_deliveries->have_posts()) {
                     $all_deliveries->the_post();
                     $post_id = get_the_ID();
                     
-                    $delivery_date = get_post_meta($post_id, 'delivery_date', true);
                     $start_time = get_post_meta($post_id, 'start_time', true);
                     $end_time = get_post_meta($post_id, 'end_time', true);
                     $sales = get_post_meta($post_id, 'total_sales', true);
                     
-                    // Add to total sales
                     $total_sales += intval($sales);
                     
-                    // Calculate hours
                     if ($start_time && $end_time) {
                         $start = strtotime($start_time);
                         $end = strtotime($end_time);
                         $hours = ($end - $start) / 3600;
                         
-                        // Add to total hours
                         $total_hours += $hours;
                         
-                        // Check if this month for monthly hours
-                        if ($delivery_date && strpos($delivery_date, $current_month) === 0) {
-                            $monthly_hours += $hours;
+                        if ($hours > $max_hours) {
+                            $max_hours = $hours;
                         }
                     }
                 }
@@ -69,10 +60,8 @@ if (!function_exists('stc_my_page_shortcode')) {
             }
         }
 
-        // Format sales (万 = 10,000)
-        $total_sales_man = number_format($total_sales / 10000, 1);
-        $monthly_hours_formatted = number_format($monthly_hours, 0);
-        $total_hours_formatted = number_format($total_hours, 0);
+        $max_hours_formatted = number_format($max_hours, 1);
+        $total_hours_formatted = number_format($total_hours, 1);
 
     ob_start();
 ?>
@@ -85,7 +74,7 @@ if (!function_exists('stc_my_page_shortcode')) {
 
             <div class="stc-img-my-page-container">
                 <img
-                    src="<?php echo esc_url('https://api.dicebear.com/8.x/lorelei/svg?seed=lorelei'); ?>"
+                    src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'assets/img/default.jpg'); ?>"
                     alt="<?php esc_attr_e('my-page Image', 'sale-time-checker'); ?>"
                     class="stc-my-page-image">
             </div>
@@ -100,7 +89,7 @@ if (!function_exists('stc_my_page_shortcode')) {
                     <span class="stc-stat-label"><?php echo esc_html__('売上', 'sale-time-checker'); ?></span>
                 </div>
                 <div class="stc-stat-item">
-                    <p class="stc-stat-value"><?php echo esc_html($monthly_hours_formatted); ?></p>
+                    <p class="stc-stat-value"><?php echo esc_html($max_hours_formatted); ?></p>
                     <span class="stc-stat-label"><?php echo esc_html__('配信時間', 'sale-time-checker'); ?></span>
                 </div>
                 <div class="stc-stat-item">
@@ -109,10 +98,10 @@ if (!function_exists('stc_my_page_shortcode')) {
                 </div>
             </div>
 
-            <div class="btn-history">
+            <div class="stc-live-list-button-container">
                 <a
                     href="<?php echo esc_url(add_query_arg('view', 'create')); ?>"
-                    class="stc-history-button">
+                    class="stc-live-list-button">
                     <?php echo esc_html__('配信内容の記録', 'sale-time-checker'); ?>
                 </a>
             </div>
@@ -220,7 +209,7 @@ if (!function_exists('stc_my_page_shortcode')) {
 }
 
 /**
- * Shortcode tổng: [stc_manager]
+ * Shortcode total: [stc_manager]
  */
 if (!function_exists('stc_manager_shortcode')) {
     function stc_manager_shortcode()
@@ -266,6 +255,10 @@ if (!function_exists('stc_manager_shortcode')) {
 
             case 'rankings':
                 echo do_shortcode('[stc_rankings]');
+                break;
+
+            case 'profile':
+                echo do_shortcode('[stc_profile]');
                 break;
 
             case 'mypage':

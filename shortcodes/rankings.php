@@ -35,7 +35,6 @@ if (!function_exists('stc_rankings_shortcode')) {
                     <label class="stc-rankings-label">月間売上ランキング</label>
 
                     <?php
-                    // Get all users with their stats
                     $users_query = new WP_Query(array(
                         'post_type' => 'stc_user',
                         'posts_per_page' => -1,
@@ -49,11 +48,9 @@ if (!function_exists('stc_rankings_shortcode')) {
                             $user_id = get_the_ID();
                             $user_name = get_post_meta($user_id, 'user_name', true);
 
-                            // Calculate stats for this user
                             $total_sales = 0;
-                            $monthly_hours = 0;
+                            $max_hours = 0;
                             $total_hours = 0;
-                            $current_month = date('Y-m');
 
                             $deliveries = new WP_Query(array(
                                 'post_type' => 'stc_delivery',
@@ -72,7 +69,6 @@ if (!function_exists('stc_rankings_shortcode')) {
                                     $deliveries->the_post();
                                     $delivery_id = get_the_ID();
 
-                                    $delivery_date = get_post_meta($delivery_id, 'delivery_date', true);
                                     $start_time = get_post_meta($delivery_id, 'start_time', true);
                                     $end_time = get_post_meta($delivery_id, 'end_time', true);
                                     $sales = get_post_meta($delivery_id, 'total_sales', true);
@@ -86,26 +82,25 @@ if (!function_exists('stc_rankings_shortcode')) {
 
                                         $total_hours += $hours;
 
-                                        if ($delivery_date && strpos($delivery_date, $current_month) === 0) {
-                                            $monthly_hours += $hours;
+                                        if ($hours > $max_hours) {
+                                            $max_hours = $hours;
                                         }
                                     }
                                 }
                                 wp_reset_postdata();
+                                
+                                $users_stats[] = array(
+                                    'user_id' => $user_id,
+                                    'name' => $user_name,
+                                    'total_sales' => $total_sales,
+                                    'max_hours' => $max_hours,
+                                    'total_hours' => $total_hours,
+                                );
                             }
-
-                            $users_stats[] = array(
-                                'user_id' => $user_id,
-                                'name' => $user_name,
-                                'total_sales' => $total_sales,
-                                'monthly_hours' => $monthly_hours,
-                                'total_hours' => $total_hours,
-                            );
                         }
                         wp_reset_postdata();
                     }
 
-                    // Sort by total_sales DESC
                     usort($users_stats, function ($a, $b) {
                         return $b['total_sales'] - $a['total_sales'];
                     });
@@ -119,9 +114,10 @@ if (!function_exists('stc_rankings_shortcode')) {
                         $rank = 1;
                         foreach ($users_stats as $user_stat) {
                             $item_class = $rank > 5 ? 'rankings_item rankings_item-hidden' : 'rankings_item';
-                            $avatar_url = 'https://api.dicebear.com/8.x/lorelei/svg?seed=' . urlencode($user_stat['name']);
+                            $avatar_url = plugin_dir_url(dirname(__FILE__)) . 'assets/img/default.jpg';
+                            $profile_url = add_query_arg(array('view' => 'profile', 'user_id' => $user_stat['user_id']), strtok(home_url(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))), '?'));
                         ?>
-                            <div class="<?php echo esc_attr($item_class); ?>">
+                            <div class="<?php echo esc_attr($item_class); ?>" onclick="window.location.href='<?php echo esc_url($profile_url); ?>'" style="cursor: pointer;">
                                 <div class="stc-rankings-grid">
                                     <div class="stc-rankings-grid-item">
                                         <?php if ($rank == 1) : ?>
@@ -150,11 +146,11 @@ if (!function_exists('stc_rankings_shortcode')) {
                                         <span class="stc-stat-label">売上</span>
                                     </div>
                                     <div class="stc-stat-item">
-                                        <p class="stc-stat-value"><?php echo esc_html(number_format($user_stat['monthly_hours'], 0)); ?></p>
+                                        <p class="stc-stat-value"><?php echo esc_html(number_format($user_stat['max_hours'], 1)); ?></p>
                                         <span class="stc-stat-label">配信時間</span>
                                     </div>
                                     <div class="stc-stat-item">
-                                        <p class="stc-stat-value"><?php echo esc_html(number_format($user_stat['total_hours'], 0)); ?></p>
+                                        <p class="stc-stat-value"><?php echo esc_html(number_format($user_stat['total_hours'], 1)); ?></p>
                                         <span class="stc-stat-label">累計配信時間</span>
                                     </div>
                                 </div>
@@ -187,21 +183,21 @@ if (!function_exists('stc_rankings_shortcode')) {
                     <label class="stc-rankings-label">配信時間ランキング</label>
 
                     <?php
-                    // Sort by monthly_hours DESC
-                    $monthly_hours_stats = $users_stats;
-                    usort($monthly_hours_stats, function ($a, $b) {
-                        return $b['monthly_hours'] - $a['monthly_hours'];
+                    $max_hours_stats = $users_stats;
+                    usort($max_hours_stats, function ($a, $b) {
+                        return $b['max_hours'] - $a['max_hours'];
                     });
                     ?>
 
                     <div class="stc-rankings-item">
                         <?php
                         $rank = 1;
-                        foreach ($monthly_hours_stats as $user_stat) {
+                        foreach ($max_hours_stats as $user_stat) {
                             $item_class = $rank > 5 ? 'rankings_item rankings_item-hidden-monthly' : 'rankings_item';
-                            $avatar_url = 'https://api.dicebear.com/8.x/lorelei/svg?seed=' . urlencode($user_stat['name']);
+                            $avatar_url = plugin_dir_url(dirname(__FILE__)) . 'assets/img/default.jpg';
+                            $profile_url = add_query_arg(array('view' => 'profile', 'user_id' => $user_stat['user_id']), strtok(home_url(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))), '?'));
                         ?>
-                            <div class="<?php echo esc_attr($item_class); ?>">
+                            <div class="<?php echo esc_attr($item_class); ?>" onclick="window.location.href='<?php echo esc_url($profile_url); ?>'" style="cursor: pointer;">
                                 <div class="stc-rankings-grid">
                                     <div class="stc-rankings-grid-item">
                                         <?php if ($rank == 1) : ?>
@@ -230,11 +226,11 @@ if (!function_exists('stc_rankings_shortcode')) {
                                         <span class="stc-stat-label">売上</span>
                                     </div>
                                     <div class="stc-stat-item">
-                                        <p class="stc-stat-value"><?php echo esc_html(number_format($user_stat['monthly_hours'], 0)); ?></p>
+                                        <p class="stc-stat-value"><?php echo esc_html(number_format($user_stat['max_hours'], 1)); ?></p>
                                         <span class="stc-stat-label">配信時間</span>
                                     </div>
                                     <div class="stc-stat-item">
-                                        <p class="stc-stat-value"><?php echo esc_html(number_format($user_stat['total_hours'], 0)); ?></p>
+                                        <p class="stc-stat-value"><?php echo esc_html(number_format($user_stat['total_hours'], 1)); ?></p>
                                         <span class="stc-stat-label">累計配信時間</span>
                                     </div>
                                 </div>
@@ -243,7 +239,7 @@ if (!function_exists('stc_rankings_shortcode')) {
                             $rank++;
                         }
 
-                        if (empty($monthly_hours_stats)) {
+                        if (empty($max_hours_stats)) {
                         ?>
                             <div class="stc-rankings-empty">
                                 <p>データがありません。</p>
@@ -267,7 +263,6 @@ if (!function_exists('stc_rankings_shortcode')) {
                     <label class="stc-rankings-label">累計配信時間ランキング</label>
 
                     <?php
-                    // Sort by total_hours DESC
                     $total_hours_stats = $users_stats;
                     usort($total_hours_stats, function ($a, $b) {
                         return $b['total_hours'] - $a['total_hours'];
@@ -279,9 +274,10 @@ if (!function_exists('stc_rankings_shortcode')) {
                         $rank = 1;
                         foreach ($total_hours_stats as $user_stat) {
                             $item_class = $rank > 5 ? 'rankings_item rankings_item-hidden-total' : 'rankings_item';
-                            $avatar_url = 'https://api.dicebear.com/8.x/lorelei/svg?seed=' . urlencode($user_stat['name']);
+                            $avatar_url = plugin_dir_url(dirname(__FILE__)) . 'assets/img/default.jpg';
+                            $profile_url = add_query_arg(array('view' => 'profile', 'user_id' => $user_stat['user_id']), strtok(home_url(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))), '?'));
                         ?>
-                            <div class="<?php echo esc_attr($item_class); ?>">
+                            <div class="<?php echo esc_attr($item_class); ?>" onclick="window.location.href='<?php echo esc_url($profile_url); ?>'" style="cursor: pointer;">
                                 <div class="stc-rankings-grid">
                                     <div class="stc-rankings-grid-item">
                                         <?php if ($rank == 1) : ?>
@@ -310,11 +306,11 @@ if (!function_exists('stc_rankings_shortcode')) {
                                         <span class="stc-stat-label">売上</span>
                                     </div>
                                     <div class="stc-stat-item">
-                                        <p class="stc-stat-value"><?php echo esc_html(number_format($user_stat['monthly_hours'], 0)); ?></p>
+                                        <p class="stc-stat-value"><?php echo esc_html(number_format($user_stat['max_hours'], 1)); ?></p>
                                         <span class="stc-stat-label">配信時間</span>
                                     </div>
                                     <div class="stc-stat-item">
-                                        <p class="stc-stat-value"><?php echo esc_html(number_format($user_stat['total_hours'], 0)); ?></p>
+                                        <p class="stc-stat-value"><?php echo esc_html(number_format($user_stat['total_hours'], 1)); ?></p>
                                         <span class="stc-stat-label">累計配信時間</span>
                                     </div>
                                 </div>

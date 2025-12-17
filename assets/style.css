@@ -1,13 +1,11 @@
 /* Google Font - Cabin */
 @import url("https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&display=swap");
 
-/* RESET */
 * {
   box-sizing: border-box;
   font-family: "Cabin", sans-serif;
 }
 
-/* --- LOGIN WRAPPER & APP WRAPPER (CONTAINER) --- */
 
 .stc-login-wrapper {
   min-height: 100vh;
@@ -18,7 +16,6 @@
   margin: 0 auto;
 }
 
-/* LOGIN TITLE */
 .stc-login-wrapper .title {
   text-align: center;
   font-size: 26px;
@@ -26,7 +23,6 @@
   margin-bottom: 48px;
 }
 
-/* FIELD */
 .login-field {
   margin-bottom: 28px;
 }
@@ -38,7 +34,6 @@
   color: #fff;
 }
 
-/* INPUT STYLE */
 .login-field input {
   width: 100%;
   height: 52px;
@@ -55,7 +50,6 @@
   border-color: #fff;
 }
 
-/* FORGOT */
 .login-forgot {
   margin-top: 12px;
 }
@@ -66,7 +60,6 @@
   text-decoration: none;
 }
 
-/* LOGIN BUTTON */
 .login-btn {
   display: block;
   width: 220px;
@@ -85,21 +78,18 @@
   opacity: 0.85;
 }
 
-/* LOGGED MESSAGE */
 .stc-logged {
   text-align: center;
   font-size: 16px;
   padding: 40px;
 }
 
-/* APP WRAPPER */
 .stc-app {
   min-height: 100vh;
   background: #000;
   color: #fff;
 }
 
-/* --- HEADER --- */
 
 .stc-header {
   display: flex;
@@ -121,7 +111,6 @@
   font-size: 12px;
 }
 
-/* --- my-page & STATS --- */
 
 .stc-my-page {
   text-align: center;
@@ -175,7 +164,7 @@
 }
 
 .stc-title {
-  font-size: 1.8em;
+  font-size: 1.2em;
   font-weight: bold;
   letter-spacing: 0.1em;
 }
@@ -753,7 +742,6 @@ input[type="date"].stc-form-input::-webkit-calendar-picker-indicator {
   opacity: 0.9;
 }
 
-/* --- RECORD PAGE (full page) --- */
 .stc-record-page {
   min-height: 100vh;
   background: #000;
@@ -804,7 +792,6 @@ input[type="date"].stc-form-input::-webkit-calendar-picker-indicator {
   color: #fff;
 }
 
-/* Error message style */
 .stc-error-message {
   display: block;
   color: #e60013;
@@ -817,13 +804,11 @@ input[type="date"].stc-form-input::-webkit-calendar-picker-indicator {
   margin-bottom: 16px;
 }
 
-/* Date input improvements - Make entire input clickable to open calendar */
 input[type="date"] {
   cursor: pointer;
   position: relative;
 }
 
-/* Expand the calendar picker indicator to cover the entire input */
 input[type="date"]::-webkit-calendar-picker-indicator {
   position: absolute;
   top: 0;
@@ -836,7 +821,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   opacity: 0;
 }
 
-/* For Firefox */
 input[type="date"]::-moz-calendar-picker-indicator {
   position: absolute;
   top: 0;
@@ -990,4 +974,32 @@ input[type="date"]::-moz-calendar-picker-indicator {
   margin-top: 20px;
   width: 200px;
   margin: 100px auto;
+}
+
+.stc-profile-back-header {
+  padding: 20px 0 10px 0;
+  text-align: left;
+}
+
+.stc-profile-back-btn {
+  color: #fff;
+  align-items: center;
+  transition: opacity 0.3s;
+  background-color: #E60013;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-weight: bold;
+  font-size: 1em;
+  text-decoration: none;
+  display: inline-block;
+  width: 200px;
+  margin: 100px auto;
+}
+
+.stc-profile-back-btn:hover {
+  opacity: 0.7;
+}
+.stc-back{
+  text-decoration: none;
+  color: #fff;
 }

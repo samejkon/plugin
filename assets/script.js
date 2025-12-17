@@ -32,17 +32,13 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Auto open calendar picker when click on date input
     const dateInputs = document.querySelectorAll('input[type="date"]');
     
     dateInputs.forEach(function(input) {
         input.addEventListener('click', function(e) {
-            // Prevent default to avoid any interference
             const self = this;
             
-            // Use showPicker() if available (modern browsers)
             if (typeof self.showPicker === 'function') {
-                // Small delay to ensure the input is focused first
                 setTimeout(function() {
                     try {
                         self.showPicker();
@@ -53,7 +49,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
         
-        // Also try on focus event
         input.addEventListener('focus', function(e) {
             const self = this;
             if (typeof self.showPicker === 'function') {
@@ -68,7 +63,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // Image upload preview functionality
     const uploadInputs = document.querySelectorAll('.stc-upload__input[data-upload-input]');
     
     uploadInputs.forEach(function(input) {
@@ -81,7 +75,6 @@ document.addEventListener("DOMContentLoaded", function () {
         
         const previewImage = previewContainer.querySelector('.stc-upload-preview__image');
         
-        // Handle file selection
         input.addEventListener('change', function(e) {
             const file = e.target.files[0];
             
@@ -92,7 +85,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     previewImage.src = event.target.result;
                     previewContainer.style.display = 'block';
                     
-                    // For update page: reset remove flag since user selected new image
                     const removeInput = document.getElementById('remove-' + uploadName.replace('_', '-'));
                     if (removeInput) {
                         removeInput.value = '';
@@ -103,19 +95,15 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
         
-        // Handle remove button click
         removeBtn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
             
-            // Clear the file input
             input.value = '';
             
-            // Hide preview
             previewContainer.style.display = 'none';
             previewImage.src = '';
             
-            // For update page: mark as removed
             const removeInput = document.getElementById('remove-' + uploadName.replace('_', '-'));
             if (removeInput) {
                 removeInput.value = '1';
@@ -123,7 +111,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // View More functionality for history list
     const viewMoreBtn = document.getElementById('stc-view-more-btn');
     
     if (viewMoreBtn) {
@@ -134,7 +121,6 @@ document.addEventListener("DOMContentLoaded", function () {
             const hiddenItems = document.querySelectorAll('.stc-history-item-hidden');
             const totalHidden = hiddenItems.length;
             
-            // Show next batch of items
             let showCount = 0;
             hiddenItems.forEach(function(item) {
                 if (showCount < itemsPerLoad) {
@@ -145,7 +131,6 @@ document.addEventListener("DOMContentLoaded", function () {
             
             currentVisible += showCount;
             
-            // Hide button if no more hidden items
             const remainingHidden = document.querySelectorAll('.stc-history-item-hidden');
             if (remainingHidden.length === 0) {
                 viewMoreBtn.style.display = 'none';
@@ -153,14 +138,12 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // View More functionality for sales ranking
     const salesRankingViewMore = document.getElementById('sales-ranking-view-more');
     
     if (salesRankingViewMore) {
         salesRankingViewMore.addEventListener('click', function() {
             const hiddenItems = document.querySelectorAll('.rankings_item-hidden');
             
-            // Show next 5 items
             let showCount = 0;
             hiddenItems.forEach(function(item) {
                 if (showCount < 5) {
@@ -169,7 +152,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
             
-            // Hide button if no more hidden items
             const remainingHidden = document.querySelectorAll('.rankings_item-hidden');
             if (remainingHidden.length === 0) {
                 salesRankingViewMore.style.display = 'none';
@@ -177,14 +159,12 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // View More functionality for monthly hours ranking
     const monthlyHoursViewMore = document.getElementById('monthly-hours-ranking-view-more');
     
     if (monthlyHoursViewMore) {
         monthlyHoursViewMore.addEventListener('click', function() {
             const hiddenItems = document.querySelectorAll('.rankings_item-hidden-monthly');
             
-            // Show next 5 items
             let showCount = 0;
             hiddenItems.forEach(function(item) {
                 if (showCount < 5) {
@@ -193,7 +173,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
             
-            // Hide button if no more hidden items
             const remainingHidden = document.querySelectorAll('.rankings_item-hidden-monthly');
             if (remainingHidden.length === 0) {
                 monthlyHoursViewMore.style.display = 'none';
@@ -201,14 +180,12 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // View More functionality for total hours ranking
     const totalHoursViewMore = document.getElementById('total-hours-ranking-view-more');
     
     if (totalHoursViewMore) {
         totalHoursViewMore.addEventListener('click', function() {
             const hiddenItems = document.querySelectorAll('.rankings_item-hidden-total');
             
-            // Show next 5 items
             let showCount = 0;
             hiddenItems.forEach(function(item) {
                 if (showCount < 5) {
@@ -217,7 +194,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
             
-            // Hide button if no more hidden items
             const remainingHidden = document.querySelectorAll('.rankings_item-hidden-total');
             if (remainingHidden.length === 0) {
                 totalHoursViewMore.style.display = 'none';
