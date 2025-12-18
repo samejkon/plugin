@@ -129,9 +129,10 @@ if (!function_exists('stc_profile_shortcode')) {
                                 'compare' => '='
                             )
                         ),
-                        'orderby' => 'meta_value',
+                        'orderby' => 'meta_value_date',
                         'meta_key' => 'delivery_date',
-                        'order' => 'DESC'
+                        'order' => 'DESC',
+                        'meta_type' => 'DATE'
                     );
                     
                     $deliveries = new WP_Query($args);
@@ -154,8 +155,8 @@ if (!function_exists('stc_profile_shortcode')) {
                             
                             $detail_url = add_query_arg(array('view' => 'detail', 'id' => $post_id, 'readonly' => '1'), strtok(home_url(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))), '?'));
                             
-                            $item_class = $index >= 10 ? 'stc-history-item stc-history-item-hidden' : 'stc-history-item';
-                            $index++;
+                            // First 10 items (index 0-9) are visible, rest are hidden
+                            $item_class = ($index < 10) ? 'stc-history-item' : 'stc-history-item stc-history-item-hidden';
                             ?>
                             <div class="<?php echo esc_attr($item_class); ?>">
                                 <div class="stc-history-date"><?php echo esc_html($formatted_date); ?></div>
@@ -168,6 +169,7 @@ if (!function_exists('stc_profile_shortcode')) {
                                 </div>
                             </div>
                             <?php
+                            $index++;
                         }
                         wp_reset_postdata();
                     } else {

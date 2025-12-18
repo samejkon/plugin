@@ -114,13 +114,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const viewMoreBtn = document.getElementById('stc-view-more-btn');
     
     if (viewMoreBtn) {
-        let currentVisible = 10;
         const itemsPerLoad = 10;
         
         viewMoreBtn.addEventListener('click', function() {
             const hiddenItems = document.querySelectorAll('.stc-history-item-hidden');
-            const totalHidden = hiddenItems.length;
             
+            if (hiddenItems.length === 0) {
+                return;
+            }
+            
+            // Show next 10 items
             let showCount = 0;
             hiddenItems.forEach(function(item) {
                 if (showCount < itemsPerLoad) {
@@ -129,11 +132,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
             
-            currentVisible += showCount;
-            
+            // Check if there are more hidden items
             const remainingHidden = document.querySelectorAll('.stc-history-item-hidden');
             if (remainingHidden.length === 0) {
-                viewMoreBtn.style.display = 'none';
+                // Hide button and container
+                const container = viewMoreBtn.closest('.stc-view-more-container');
+                if (container) {
+                    container.style.display = 'none';
+                } else {
+                    viewMoreBtn.style.display = 'none';
+                }
             }
         });
     }
@@ -200,5 +208,111 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+
+    // Image Preview Modal
+    let imageModal = document.getElementById('stc-image-modal');
+    
+    // Create modal if it doesn't exist
+    if (!imageModal) {
+        const modalHTML = `
+            <div id="stc-image-modal" class="stc-image-modal">
+                <div class="stc-image-modal__backdrop"></div>
+                <div class="stc-image-modal__content">
+                    <button id="stc-image-modal-close" class="stc-image-modal__close" aria-label="Close">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                    <img id="stc-image-modal-img" class="stc-image-modal__image" src="" alt="Preview">
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        imageModal = document.getElementById('stc-image-modal');
+    }
+    
+    const modalImg = document.getElementById('stc-image-modal-img');
+    const modalClose = document.getElementById('stc-image-modal-close');
+    const modalBackdrop = imageModal.querySelector('.stc-image-modal__backdrop');
+    
+    // Function to open modal
+    function openImageModal(imageSrc) {
+        if (modalImg && imageModal) {
+            modalImg.src = imageSrc;
+            imageModal.classList.add('stc-image-modal--active');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+    
+    // Function to close modal
+    function closeImageModal() {
+        if (imageModal) {
+            imageModal.classList.remove('stc-image-modal--active');
+            document.body.style.overflow = '';
+            setTimeout(function() {
+                if (modalImg) {
+                    modalImg.src = '';
+                }
+            }, 300);
+        }
+    }
+    
+    // Add click event to all images (including dynamically loaded ones)
+    function attachImageClickEvents() {
+        const allImages = document.querySelectorAll('.stc-confirm-image, .stc-upload-preview__image');
+        
+        allImages.forEach(function(img) {
+            if (!img.hasAttribute('data-preview-attached')) {
+                img.style.cursor = 'pointer';
+                img.setAttribute('data-preview-attached', 'true');
+                img.addEventListener('click', function(e) {
+                    // Don't open modal if clicking on remove button
+                    const removeBtn = this.closest('.stc-upload-preview')?.querySelector('.stc-upload-preview__remove');
+                    if (removeBtn && removeBtn.contains(e.target)) {
+                        return;
+                    }
+                    
+                    e.stopPropagation();
+                    const imageSrc = this.src;
+                    if (imageSrc && imageSrc.trim() !== '') {
+                        openImageModal(imageSrc);
+                    }
+                });
+            }
+        });
+    }
+    
+    // Initial attach
+    attachImageClickEvents();
+    
+    // Re-attach when new images are loaded (for upload preview)
+    const observer = new MutationObserver(function(mutations) {
+        attachImageClickEvents();
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    
+    // Close modal events
+    if (modalClose) {
+        modalClose.addEventListener('click', function(e) {
+            e.stopPropagation();
+            closeImageModal();
+        });
+    }
+    
+    if (modalBackdrop) {
+        modalBackdrop.addEventListener('click', closeImageModal);
+    }
+    
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && imageModal && imageModal.classList.contains('stc-image-modal--active')) {
+            closeImageModal();
+        }
+    });
 
 });
