@@ -124,7 +124,7 @@ if (!function_exists('stc_my_page_shortcode')) {
                         
                         $args = array(
                             'post_type' => 'stc_delivery',
-                            'posts_per_page' => -1,
+                            'posts_per_page' => 10,
                             'meta_query' => array(
                                 array(
                                     'key' => 'user_id',
@@ -190,7 +190,11 @@ if (!function_exists('stc_my_page_shortcode')) {
             
             <?php if (isset($total_count) && $total_count > 10) : ?>
             <div class="stc-view-more-container">
-                <button class="stc-view-more-btn" id="stc-view-more-btn">
+                <button class="stc-view-more-btn" id="stc-view-more-btn"
+                    data-current-page="1"
+                    data-total="<?php echo esc_attr($total_count); ?>"
+                    data-user-id="<?php echo esc_attr($user_id); ?>"
+                    data-ajax-url="<?php echo esc_url(admin_url('admin-ajax.php')); ?>">
                     VIEW MORE
                 </button>
             </div>
