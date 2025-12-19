@@ -49,7 +49,6 @@ if (!function_exists('stc_rankings_shortcode')) {
                             $user_name = get_post_meta($user_id, 'user_name', true);
 
                             $total_sales = 0;
-                            $max_hours = 0;
                             $total_hours = 0;
 
                             $deliveries = new WP_Query(array(
@@ -81,10 +80,6 @@ if (!function_exists('stc_rankings_shortcode')) {
                                         $hours = ($end - $start) / 3600;
 
                                         $total_hours += $hours;
-
-                                        if ($hours > $max_hours) {
-                                            $max_hours = $hours;
-                                        }
                                     }
                                 }
                                 wp_reset_postdata();
@@ -93,7 +88,6 @@ if (!function_exists('stc_rankings_shortcode')) {
                                     'user_id' => $user_id,
                                     'name' => $user_name,
                                     'total_sales' => $total_sales,
-                                    'max_hours' => $max_hours,
                                     'total_hours' => $total_hours,
                                 );
                             }
@@ -146,10 +140,6 @@ if (!function_exists('stc_rankings_shortcode')) {
                                         <span class="stc-stat-label">売上</span>
                                     </div>
                                     <div class="stc-stat-item">
-                                        <p class="stc-stat-value"><?php echo esc_html(number_format($user_stat['max_hours'], 1)); ?></p>
-                                        <span class="stc-stat-label">配信時間</span>
-                                    </div>
-                                    <div class="stc-stat-item">
                                         <p class="stc-stat-value"><?php echo esc_html(number_format($user_stat['total_hours'], 1)); ?></p>
                                         <span class="stc-stat-label">累計配信時間</span>
                                     </div>
@@ -173,89 +163,6 @@ if (!function_exists('stc_rankings_shortcode')) {
                                 <button class="rankings-view-more-btn" 
                                     data-items-per-load="5" 
                                     data-hidden-class="rankings_item-hidden"
-                                    data-container-class="rankings-view-more-container">
-                                    VIEW MORE
-                                </button>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                </div>
-
-                <!--  配信時間ランキング-->
-                <div class="stc-rankings-list">
-                    <label class="stc-rankings-label">配信時間ランキング</label>
-
-                    <?php
-                    $max_hours_stats = $users_stats;
-                    usort($max_hours_stats, function ($a, $b) {
-                        return $b['max_hours'] - $a['max_hours'];
-                    });
-                    ?>
-
-                    <div class="stc-rankings-item">
-                        <?php
-                        $rank = 1;
-                        foreach ($max_hours_stats as $user_stat) {
-                            $item_class = $rank > 5 ? 'rankings_item rankings_item-hidden-monthly' : 'rankings_item';
-                            $avatar_url = plugin_dir_url(dirname(__FILE__)) . 'assets/img/default.jpg';
-                            $profile_url = add_query_arg(array('view' => 'profile', 'user_id' => $user_stat['user_id']), strtok(home_url(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))), '?'));
-                        ?>
-                            <div class="<?php echo esc_attr($item_class); ?>" onclick="window.location.href='<?php echo esc_url($profile_url); ?>'" style="cursor: pointer;">
-                                <div class="stc-rankings-grid">
-                                    <div class="stc-rankings-grid-item">
-                                        <?php if ($rank == 1) : ?>
-                                            <img src="<?php echo esc_url($plugin_url . 'assets/img/rank1.svg'); ?>" alt="Rank 1" class="stc-rankings-rank-icon">
-                                        <?php elseif ($rank == 2) : ?>
-                                            <img src="<?php echo esc_url($plugin_url . 'assets/img/rank2.svg'); ?>" alt="Rank 2" class="stc-rankings-rank-icon">
-                                        <?php elseif ($rank == 3) : ?>
-                                            <img src="<?php echo esc_url($plugin_url . 'assets/img/rank3.svg'); ?>" alt="Rank 3" class="stc-rankings-rank-icon">
-                                        <?php else : ?>
-                                            <?php echo $rank; ?>
-                                        <?php endif; ?>
-                                    </div>
-                                    <div class="stc-rankings-grid-item">
-                                        <div class="stc-img-my-page-container">
-                                            <img
-                                                src="<?php echo esc_url($avatar_url); ?>"
-                                                alt="<?php echo esc_attr($user_stat['name']); ?>"
-                                                class="stc-rankings-grid-item__image">
-                                        </div>
-                                    </div>
-                                    <div class="stc-rankings-grid-item"><?php echo esc_html($user_stat['name']); ?></div>
-                                </div>
-                                <div class="stc-stats-grid">
-                                    <div class="stc-stat-item">
-                                        <p class="stc-stat-value">¥<?php echo esc_html(number_format($user_stat['total_sales'])); ?></p>
-                                        <span class="stc-stat-label">売上</span>
-                                    </div>
-                                    <div class="stc-stat-item">
-                                        <p class="stc-stat-value"><?php echo esc_html(number_format($user_stat['max_hours'], 1)); ?></p>
-                                        <span class="stc-stat-label">配信時間</span>
-                                    </div>
-                                    <div class="stc-stat-item">
-                                        <p class="stc-stat-value"><?php echo esc_html(number_format($user_stat['total_hours'], 1)); ?></p>
-                                        <span class="stc-stat-label">累計配信時間</span>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php
-                            $rank++;
-                        }
-
-                        if (empty($max_hours_stats)) {
-                        ?>
-                            <div class="stc-rankings-empty">
-                                <p>データがありません。</p>
-                            </div>
-                        <?php
-                        }
-                        ?>
-
-                        <?php if ($total_users > 5) : ?>
-                            <div class="rankings-view-more-container">
-                                <button class="rankings-view-more-btn" 
-                                    data-items-per-load="5" 
-                                    data-hidden-class="rankings_item-hidden-monthly"
                                     data-container-class="rankings-view-more-container">
                                     VIEW MORE
                                 </button>
@@ -310,10 +217,6 @@ if (!function_exists('stc_rankings_shortcode')) {
                                     <div class="stc-stat-item">
                                         <p class="stc-stat-value">¥<?php echo esc_html(number_format($user_stat['total_sales'])); ?></p>
                                         <span class="stc-stat-label">売上</span>
-                                    </div>
-                                    <div class="stc-stat-item">
-                                        <p class="stc-stat-value"><?php echo esc_html(number_format($user_stat['max_hours'], 1)); ?></p>
-                                        <span class="stc-stat-label">配信時間</span>
                                     </div>
                                     <div class="stc-stat-item">
                                         <p class="stc-stat-value"><?php echo esc_html(number_format($user_stat['total_hours'], 1)); ?></p>

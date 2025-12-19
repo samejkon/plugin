@@ -25,7 +25,6 @@ if (!function_exists('stc_profile_shortcode')) {
         $user_name = get_post_meta($viewed_user_id, 'user_name', true);
         
         $total_sales = 0;
-        $max_hours = 0;
         $total_hours = 0;
         
         $all_deliveries = new WP_Query(array(
@@ -57,16 +56,11 @@ if (!function_exists('stc_profile_shortcode')) {
                     $hours = ($end - $start) / 3600;
                     
                     $total_hours += $hours;
-                    
-                    if ($hours > $max_hours) {
-                        $max_hours = $hours;
-                    }
                 }
             }
             wp_reset_postdata();
         }
 
-        $max_hours_formatted = number_format($max_hours, 1);
         $total_hours_formatted = number_format($total_hours, 1);
         
         $back_url = add_query_arg('view', 'rankings', strtok(home_url(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))), '?'));
@@ -96,10 +90,6 @@ if (!function_exists('stc_profile_shortcode')) {
                 <div class="stc-stat-item">
                     <p class="stc-stat-value">¥<?php echo esc_html(number_format($total_sales)); ?></p>
                     <span class="stc-stat-label"><?php echo esc_html__('売上', 'sale-time-checker'); ?></span>
-                </div>
-                <div class="stc-stat-item">
-                    <p class="stc-stat-value"><?php echo esc_html($max_hours_formatted); ?></p>
-                    <span class="stc-stat-label"><?php echo esc_html__('配信時間', 'sale-time-checker'); ?></span>
                 </div>
                 <div class="stc-stat-item">
                     <p class="stc-stat-value"><?php echo esc_html($total_hours_formatted); ?></p>

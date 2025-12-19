@@ -15,7 +15,6 @@ if (!function_exists('stc_my_page_shortcode')) {
         $user_name = $current_user ? $current_user['name'] : 'Guest';
 
         $total_sales = 0;
-        $max_hours = 0;
         $total_hours = 0;
 
         if ($current_user) {
@@ -50,17 +49,12 @@ if (!function_exists('stc_my_page_shortcode')) {
                         $hours = ($end - $start) / 3600;
                         
                         $total_hours += $hours;
-                        
-                        if ($hours > $max_hours) {
-                            $max_hours = $hours;
-                        }
                     }
                 }
                 wp_reset_postdata();
             }
         }
 
-        $max_hours_formatted = number_format($max_hours, 1);
         $total_hours_formatted = number_format($total_hours, 1);
 
     ob_start();
