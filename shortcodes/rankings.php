@@ -120,7 +120,8 @@ if (!function_exists('stc_rankings_shortcode')) {
                         $rank = 1;
                         foreach ($users_stats as $user_stat) {
                             $item_class = $rank > 5 ? 'rankings_item rankings_item-hidden' : 'rankings_item';
-                            $avatar_url = plugin_dir_url(dirname(__FILE__)) . 'assets/img/default.jpg';
+                            $user_avatar = get_post_meta($user_stat['user_id'], 'user_avatar', true);
+                            $avatar_url = $user_avatar ? $user_avatar : plugin_dir_url(dirname(__FILE__)) . 'assets/img/default.jpg';
                             $profile_url = add_query_arg(array('view' => 'profile', 'user_id' => $user_stat['user_id']), strtok(home_url(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))), '?'));
                         ?>
                             <div class="<?php echo esc_attr($item_class); ?>" onclick="window.location.href='<?php echo esc_url($profile_url); ?>'" style="cursor: pointer;">
@@ -199,7 +200,8 @@ if (!function_exists('stc_rankings_shortcode')) {
                         $rank = 1;
                         foreach ($total_hours_stats as $user_stat) {
                             $item_class = $rank > 5 ? 'rankings_item rankings_item-hidden-total' : 'rankings_item';
-                            $avatar_url = plugin_dir_url(dirname(__FILE__)) . 'assets/img/default.jpg';
+                            $user_avatar = get_post_meta($user_stat['user_id'], 'user_avatar', true);
+                            $avatar_url = $user_avatar ? $user_avatar : plugin_dir_url(dirname(__FILE__)) . 'assets/img/default.jpg';
                             $profile_url = add_query_arg(array('view' => 'profile', 'user_id' => $user_stat['user_id']), strtok(home_url(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))), '?'));
                         ?>
                             <div class="<?php echo esc_attr($item_class); ?>" onclick="window.location.href='<?php echo esc_url($profile_url); ?>'" style="cursor: pointer;">

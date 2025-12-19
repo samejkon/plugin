@@ -183,8 +183,8 @@ if (!function_exists('stc_my_page_shortcode')) {
 
             <div class="stc-history">
                 <div class="stc-history-head">
-                    <div class="stc-history-col"><?php echo esc_html__('配信日', 'sale-time-checker'); ?></div>
-                    <div class="stc-history-col"><?php echo esc_html__('時間', 'sale-time-checker'); ?></div>
+                    <div class="stc-history-col"><?php echo esc_html__('開始', 'sale-time-checker'); ?></div>
+                    <div class="stc-history-col"><?php echo esc_html__('終了', 'sale-time-checker'); ?></div>
                     <div class="stc-history-col"><?php echo esc_html__('売上合計', 'sale-time-checker'); ?></div>
                     <div class="stc-history-col"></div>
                 </div>
@@ -242,22 +242,21 @@ if (!function_exists('stc_my_page_shortcode')) {
                                 $end_time = get_post_meta($post_id, 'end_time', true);
                                 $total_sales = get_post_meta($post_id, 'total_sales', true);
                                 
-                                $formatted_date = $delivery_date ? date('Y/m/d', strtotime($delivery_date)) : '';
+                                $formatted_start_date = $delivery_date ? date('Y/m/d', strtotime($delivery_date)) : '';
+                                $actual_end_date = $end_date ? $end_date : $delivery_date;
+                                $formatted_end_date = $actual_end_date ? date('Y/m/d', strtotime($actual_end_date)) : '';
                                 
-                                // Format time range
-                                if ($start_time && $end_time) {
-                                    $time_range = $start_time . '～' . $end_time;
-                                } else {
-                                    $time_range = '';
-                                }
+                                $start_datetime = $formatted_start_date && $start_time ? $formatted_start_date . ' ' . $start_time : '';
+                                $end_datetime = $formatted_end_date && $end_time ? $formatted_end_date . ' ' . $end_time : '';
                                 
                                 $formatted_sales = $total_sales ? '¥' . number_format($total_sales) : '¥0';
                                 
                                 $detail_url = add_query_arg(array('view' => 'detail', 'id' => $post_id));
                                 ?>
                                 <div class="stc-history-item">
-                                    <div class="stc-history-date"><?php echo esc_html($formatted_date); ?></div>
-                                    <div class="stc-history-time"><?php echo esc_html($time_range); ?></div>
+                                    <div class="stc-history-start"><?php echo esc_html($start_datetime); ?></div>
+                                    <div>~</div>
+                                    <div class="stc-history-end"><?php echo esc_html($end_datetime); ?></div>
                                     <div class="stc-history-sales"><?php echo esc_html($formatted_sales); ?></div>
                                     <div class="stc-history-action">
                                         <a href="<?php echo esc_url($detail_url); ?>" class="stc-detail-button">

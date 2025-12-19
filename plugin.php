@@ -259,14 +259,12 @@ if (!function_exists('stc_load_more_deliveries')) {
                 $end_time = get_post_meta($post_id, 'end_time', true);
                 $total_sales = get_post_meta($post_id, 'total_sales', true);
                 
-                $formatted_date = $delivery_date ? date('Y/m/d', strtotime($delivery_date)) : '';
+                $formatted_start_date = $delivery_date ? date('Y/m/d', strtotime($delivery_date)) : '';
+                $actual_end_date = $end_date ? $end_date : $delivery_date;
+                $formatted_end_date = $actual_end_date ? date('Y/m/d', strtotime($actual_end_date)) : '';
                 
-                // Format time range
-                if ($start_time && $end_time) {
-                    $time_range = $start_time . '～' . $end_time;
-                } else {
-                    $time_range = '';
-                }
+                $start_datetime = $formatted_start_date && $start_time ? $formatted_start_date . ' ' . $start_time : '';
+                $end_datetime = $formatted_end_date && $end_time ? $formatted_end_date . ' ' . $end_time : '';
                 
                 $formatted_sales = $total_sales ? '¥' . number_format($total_sales) : '¥0';
                 
@@ -279,8 +277,8 @@ if (!function_exists('stc_load_more_deliveries')) {
                 }
                 
                 $html .= '<div class="stc-history-item">';
-                $html .= '<div class="stc-history-date">' . esc_html($formatted_date) . '</div>';
-                $html .= '<div class="stc-history-time">' . esc_html($time_range) . '</div>';
+                $html .= '<div class="stc-history-start">' . esc_html($start_datetime) . '</div>';
+                $html .= '<div class="stc-history-end">' . esc_html($end_datetime) . '</div>';
                 $html .= '<div class="stc-history-sales">' . esc_html($formatted_sales) . '</div>';
                 $html .= '<div class="stc-history-action">';
                 $html .= '<a href="' . esc_url($detail_url) . '" class="stc-detail-button">' . esc_html__('詳細', 'sale-time-checker') . '</a>';
