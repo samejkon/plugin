@@ -119,6 +119,24 @@ if (!function_exists('stc_profile_shortcode')) {
 
                 <div class="stc-history-body">
                     <?php
+                    // Get total count first
+                    $count_args = array(
+                        'post_type' => 'stc_delivery',
+                        'posts_per_page' => -1,
+                        'fields' => 'ids',
+                        'meta_query' => array(
+                            array(
+                                'key' => 'user_id',
+                                'value' => $viewed_user_id,
+                                'compare' => '='
+                            )
+                        ),
+                    );
+                    $count_query = new WP_Query($count_args);
+                    $total_count = $count_query->found_posts;
+                    wp_reset_postdata();
+                    
+                    // Get first 10 records for display
                     $args = array(
                         'post_type' => 'stc_delivery',
                         'posts_per_page' => 10,
@@ -136,10 +154,8 @@ if (!function_exists('stc_profile_shortcode')) {
                     );
                     
                     $deliveries = new WP_Query($args);
-                    $total_count = $deliveries->found_posts;
                     
                     if ($deliveries->have_posts()) {
-                        $index = 0;
                         while ($deliveries->have_posts()) {
                             $deliveries->the_post();
                             $post_id = get_the_ID();
@@ -154,11 +170,8 @@ if (!function_exists('stc_profile_shortcode')) {
                             $formatted_sales = $total_sales ? '¥' . number_format($total_sales) : '¥0';
                             
                             $detail_url = add_query_arg(array('view' => 'detail', 'id' => $post_id, 'readonly' => '1'), strtok(home_url(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))), '?'));
-                            
-                            // First 10 items (index 0-9) are visible, rest are hidden
-                            $item_class = ($index < 10) ? 'stc-history-item' : 'stc-history-item stc-history-item-hidden';
                             ?>
-                            <div class="<?php echo esc_attr($item_class); ?>">
+                            <div class="stc-history-item">
                                 <div class="stc-history-date"><?php echo esc_html($formatted_date); ?></div>
                                 <div class="stc-history-time"><?php echo esc_html($time_range); ?></div>
                                 <div class="stc-history-sales"><?php echo esc_html($formatted_sales); ?></div>
@@ -169,7 +182,6 @@ if (!function_exists('stc_profile_shortcode')) {
                                 </div>
                             </div>
                             <?php
-                            $index++;
                         }
                         wp_reset_postdata();
                     } else {
@@ -186,11 +198,12 @@ if (!function_exists('stc_profile_shortcode')) {
             
             <?php if (isset($total_count) && $total_count > 10) : ?>
             <div class="stc-view-more-container">
-                <button class="stc-view-more-btn" id="stc-view-more-btn"
-                    data-current-page="1"
-                    data-total="<?php echo esc_attr($total_count); ?>"
+                <button class="stc-view-more-btn" 
+                    data-page="1"
+                    data-per-page="10"
                     data-user-id="<?php echo esc_attr($viewed_user_id); ?>"
-                    data-ajax-url="<?php echo esc_url(admin_url('admin-ajax.php')); ?>">
+                    data-total="<?php echo esc_attr($total_count); ?>"
+                    data-type="profile">
                     VIEW MORE
                 </button>
             </div>

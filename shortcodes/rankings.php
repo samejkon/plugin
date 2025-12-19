@@ -54,7 +54,7 @@ if (!function_exists('stc_rankings_shortcode')) {
 
                             $deliveries = new WP_Query(array(
                                 'post_type' => 'stc_delivery',
-                                'posts_per_page' => -1,
+                                'posts_per_page' => 5,
                                 'meta_query' => array(
                                     array(
                                         'key' => 'user_id',
@@ -109,7 +109,7 @@ if (!function_exists('stc_rankings_shortcode')) {
                     $total_users = count($users_stats);
                     ?>
 
-                    <div class="stc-rankings-item" id="sales-rankings-list">
+                    <div class="stc-rankings-item">
                         <?php
                         $rank = 1;
                         foreach ($users_stats as $user_stat) {
@@ -170,12 +170,10 @@ if (!function_exists('stc_rankings_shortcode')) {
 
                         <?php if ($total_users > 5) : ?>
                             <div class="rankings-view-more-container">
-                                <button class="rankings-view-more-btn" id="sales-ranking-view-more"
-                                    data-current-page="1"
-                                    data-total="<?php echo esc_attr($total_users); ?>"
-                                    data-sort="sales"
-                                    data-target="#sales-rankings-list"
-                                    data-ajax-url="<?php echo esc_url(admin_url('admin-ajax.php')); ?>">
+                                <button class="rankings-view-more-btn" 
+                                    data-items-per-load="5" 
+                                    data-hidden-class="rankings_item-hidden"
+                                    data-container-class="rankings-view-more-container">
                                     VIEW MORE
                                 </button>
                             </div>
@@ -194,7 +192,7 @@ if (!function_exists('stc_rankings_shortcode')) {
                     });
                     ?>
 
-                    <div class="stc-rankings-item" id="monthly-rankings-list">
+                    <div class="stc-rankings-item">
                         <?php
                         $rank = 1;
                         foreach ($max_hours_stats as $user_stat) {
@@ -255,12 +253,10 @@ if (!function_exists('stc_rankings_shortcode')) {
 
                         <?php if ($total_users > 5) : ?>
                             <div class="rankings-view-more-container">
-                                <button class="rankings-view-more-btn" id="monthly-hours-ranking-view-more"
-                                    data-current-page="1"
-                                    data-total="<?php echo esc_attr($total_users); ?>"
-                                    data-sort="max_hours"
-                                    data-target="#monthly-rankings-list"
-                                    data-ajax-url="<?php echo esc_url(admin_url('admin-ajax.php')); ?>">
+                                <button class="rankings-view-more-btn" 
+                                    data-items-per-load="5" 
+                                    data-hidden-class="rankings_item-hidden-monthly"
+                                    data-container-class="rankings-view-more-container">
                                     VIEW MORE
                                 </button>
                             </div>
@@ -279,7 +275,7 @@ if (!function_exists('stc_rankings_shortcode')) {
                     });
                     ?>
 
-                    <div class="stc-rankings-item" id="total-rankings-list">
+                    <div class="stc-rankings-item">
                         <?php
                         $rank = 1;
                         foreach ($total_hours_stats as $user_stat) {
@@ -340,12 +336,10 @@ if (!function_exists('stc_rankings_shortcode')) {
 
                         <?php if ($total_users > 5) : ?>
                             <div class="rankings-view-more-container">
-                                <button class="rankings-view-more-btn" id="total-hours-ranking-view-more"
-                                    data-current-page="1"
-                                    data-total="<?php echo esc_attr($total_users); ?>"
-                                    data-sort="total_hours"
-                                    data-target="#total-rankings-list"
-                                    data-ajax-url="<?php echo esc_url(admin_url('admin-ajax.php')); ?>">
+                                <button class="rankings-view-more-btn" 
+                                    data-items-per-load="5" 
+                                    data-hidden-class="rankings_item-hidden-total"
+                                    data-container-class="rankings-view-more-container">
                                     VIEW MORE
                                 </button>
                             </div>

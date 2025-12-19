@@ -111,188 +111,126 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    const viewMoreBtn = document.getElementById('stc-view-more-btn');
-    
-    if (viewMoreBtn) {
-        const itemsPerLoad = 10;
-
-        viewMoreBtn.addEventListener('click', function() {
-            const hiddenItems = document.querySelectorAll('.stc-history-item-hidden');
-
-            if (hiddenItems.length > 0) {
-                // Show next 10 items (existing fallback behavior)
-                let showCount = 0;
-                hiddenItems.forEach(function(item) {
-                    if (showCount < itemsPerLoad) {
-                        item.classList.remove('stc-history-item-hidden');
-                        showCount++;
-                    }
-                });
-
-                // Check if there are more hidden items
-                const remainingHidden = document.querySelectorAll('.stc-history-item-hidden');
-                if (remainingHidden.length === 0) {
-                    const container = viewMoreBtn.closest('.stc-view-more-container');
-                    if (container) {
-                        container.style.display = 'none';
+    // AJAX View More Handler for my-page and profile
+    function handleDeliveryViewMore(button) {
+        // Check if stcAjax is available
+        if (typeof stcAjax === 'undefined' || typeof jQuery === 'undefined') {
+            console.error('stcAjax or jQuery is not defined');
+            return;
+        }
+        
+        const currentPage = parseInt(button.getAttribute('data-page')) || 1;
+        const perPage = parseInt(button.getAttribute('data-per-page')) || 10;
+        const userId = button.getAttribute('data-user-id');
+        const type = button.getAttribute('data-type') || 'mypage';
+        const container = button.closest('.stc-view-more-container');
+        const historyBody = document.querySelector('.stc-history-body');
+        
+        if (!historyBody || !userId) {
+            console.error('History body or user ID not found');
+            return;
+        }
+        
+        // Disable button during loading
+        button.disabled = true;
+        const originalText = button.textContent;
+        button.textContent = 'Loading...';
+        
+        // Calculate next page
+        const nextPage = currentPage + 1;
+        
+        // AJAX request
+        jQuery.ajax({
+            url: stcAjax.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'stc_load_more_deliveries',
+                nonce: stcAjax.nonce,
+                page: nextPage,
+                per_page: perPage,
+                user_id: userId,
+                type: type
+            },
+            success: function(response) {
+                if (response.success && response.data && response.data.html) {
+                    // Append new items
+                    historyBody.insertAdjacentHTML('beforeend', response.data.html);
+                    
+                    // Update button
+                    if (response.data.has_more) {
+                        button.setAttribute('data-page', nextPage);
+                        button.disabled = false;
+                        button.textContent = originalText;
                     } else {
-                        viewMoreBtn.style.display = 'none';
+                        // Hide button and container
+                        if (container) {
+                            container.style.display = 'none';
+                        } else {
+                            button.style.display = 'none';
+                        }
                     }
+                } else {
+                    button.disabled = false;
+                    button.textContent = originalText;
+                    console.error('AJAX response error:', response);
                 }
-
-                return;
+            },
+            error: function(xhr, status, error) {
+                button.disabled = false;
+                button.textContent = originalText;
+                console.error('AJAX error:', status, error);
             }
-
-            // No hidden items present => request next page via AJAX
-            const ajaxUrl = viewMoreBtn.getAttribute('data-ajax-url');
-            const userId = viewMoreBtn.getAttribute('data-user-id');
-            const totalCount = parseInt(viewMoreBtn.getAttribute('data-total') || '0', 10);
-            let currentPage = parseInt(viewMoreBtn.getAttribute('data-current-page') || '1', 10);
-            const nextPage = currentPage + 1;
-
-            if (!ajaxUrl || !userId) {
-                console.warn('stc: missing ajax url or user id');
-                return;
-            }
-
-            // Prevent double-clicks
-            if (viewMoreBtn.getAttribute('data-loading') === '1') {
-                return;
-            }
-            viewMoreBtn.setAttribute('data-loading', '1');
-            viewMoreBtn.disabled = true;
-
-            const form = new FormData();
-            form.append('action', 'stc_load_more_deliveries');
-            form.append('page', nextPage);
-            form.append('user_id', userId);
-
-            fetch(ajaxUrl, {
-                method: 'POST',
-                body: form,
-                credentials: 'same-origin'
-            })
-            .then(function(response) {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.status);
-                }
-                return response.text();
-            })
-            .then(function(html) {
-                if (!html || html.trim() === '') {
-                    const container = viewMoreBtn.closest('.stc-view-more-container');
-                    if (container) container.style.display = 'none';
-                    viewMoreBtn.style.display = 'none';
-                    viewMoreBtn.removeAttribute('data-loading');
-                    viewMoreBtn.disabled = false;
-                    return;
-                }
-
-                const container = document.querySelector('.stc-history-body');
-                if (container) {
-                    container.insertAdjacentHTML('beforeend', html);
-                }
-
-                // Update page counter
-                currentPage = nextPage;
-                viewMoreBtn.setAttribute('data-current-page', String(currentPage));
-
-                // Re-attach image click events in case any images were added
-                attachImageClickEvents();
-
-                // Hide button if we've loaded all items
-                if (currentPage * itemsPerLoad >= totalCount) {
-                    const parent = viewMoreBtn.closest('.stc-view-more-container');
-                    if (parent) parent.style.display = 'none';
-                    viewMoreBtn.style.display = 'none';
-                }
-
-                viewMoreBtn.removeAttribute('data-loading');
-                viewMoreBtn.disabled = false;
-            })
-            .catch(function(err) {
-                console.error('Error loading more items:', err);
-                viewMoreBtn.removeAttribute('data-loading');
-                viewMoreBtn.disabled = false;
-            });
         });
     }
-
-    const salesRankingViewMore = document.getElementById('sales-ranking-view-more');
     
-    function handleRankingsViewMore(btn) {
-        if (!btn) return;
-
-        const perLoad = 5;
-
-        btn.addEventListener('click', function() {
-            const targetSelector = btn.getAttribute('data-target');
-            const ajaxUrl = btn.getAttribute('data-ajax-url');
-            const sort = btn.getAttribute('data-sort');
-            const total = parseInt(btn.getAttribute('data-total') || '0', 10);
-            let currentPage = parseInt(btn.getAttribute('data-current-page') || '1', 10);
-            const nextPage = currentPage + 1;
-
-            if (!ajaxUrl || !targetSelector) {
-                console.warn('stc: missing ajax url or target for rankings');
-                return;
+    // Show/Hide View More Handler for rankings
+    function handleRankingsViewMore(button) {
+        const itemsPerLoad = parseInt(button.getAttribute('data-items-per-load')) || 5;
+        const hiddenClass = button.getAttribute('data-hidden-class') || 'rankings_item-hidden';
+        const containerClass = button.getAttribute('data-container-class') || 'rankings-view-more-container';
+        
+        const hiddenItems = document.querySelectorAll('.' + hiddenClass);
+        
+        if (hiddenItems.length === 0) {
+            return;
+        }
+        
+        // Show next batch of items
+        let showCount = 0;
+        hiddenItems.forEach(function(item) {
+            if (showCount < itemsPerLoad) {
+                item.classList.remove(hiddenClass);
+                showCount++;
             }
-
-            // Prevent double clicks
-            if (btn.getAttribute('data-loading') === '1') return;
-            btn.setAttribute('data-loading', '1');
-            btn.disabled = true;
-
-            const form = new FormData();
-            form.append('action', 'stc_load_more_rankings');
-            form.append('page', nextPage);
-            form.append('sort', sort);
-
-            fetch(ajaxUrl, { method: 'POST', body: form, credentials: 'same-origin' })
-                .then(function(response) {
-                    if (!response.ok) throw new Error('Network response not ok');
-                    return response.text();
-                })
-                .then(function(html) {
-                    if (!html || html.trim() === '') {
-                        const parent = btn.closest('.rankings-view-more-container');
-                        if (parent) parent.style.display = 'none';
-                        btn.style.display = 'none';
-                        return;
-                    }
-
-                    const target = document.querySelector(targetSelector);
-                    if (target) target.insertAdjacentHTML('beforeend', html);
-
-                    currentPage = nextPage;
-                    btn.setAttribute('data-current-page', String(currentPage));
-
-                    if (currentPage * perLoad >= total) {
-                        const parent = btn.closest('.rankings-view-more-container');
-                        if (parent) parent.style.display = 'none';
-                        btn.style.display = 'none';
-                    }
-
-                    btn.removeAttribute('data-loading');
-                    btn.disabled = false;
-                })
-                .catch(function(err) {
-                    console.error('Error loading rankings:', err);
-                    btn.removeAttribute('data-loading');
-                    btn.disabled = false;
-                });
         });
+        
+        // Check if there are more hidden items
+        const remainingHidden = document.querySelectorAll('.' + hiddenClass);
+        if (remainingHidden.length === 0) {
+            // Hide button and container
+            const container = button.closest('.' + containerClass);
+            if (container) {
+                container.style.display = 'none';
+            } else {
+                button.style.display = 'none';
+            }
+        }
     }
-
-    handleRankingsViewMore(salesRankingViewMore);
-
-    const monthlyHoursViewMore = document.getElementById('monthly-hours-ranking-view-more');
     
-    handleRankingsViewMore(monthlyHoursViewMore);
-
-    const totalHoursViewMore = document.getElementById('total-hours-ranking-view-more');
+    // Attach event listeners separately
+    const deliveryViewMoreButtons = document.querySelectorAll('.stc-view-more-btn');
+    deliveryViewMoreButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            handleDeliveryViewMore(this);
+        });
+    });
     
-    handleRankingsViewMore(totalHoursViewMore);
+    const rankingsViewMoreButtons = document.querySelectorAll('.rankings-view-more-btn');
+    rankingsViewMoreButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            handleRankingsViewMore(this);
+        });
+    });
 
     // Image Preview Modal
     let imageModal = document.getElementById('stc-image-modal');
