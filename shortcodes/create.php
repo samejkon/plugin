@@ -33,6 +33,8 @@ if (!function_exists('stc_handle_create_delivery')) {
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $delivery_date = isset($_POST['delivery_date']) ? sanitize_text_field(wp_unslash($_POST['delivery_date'])) : '';
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $end_date = isset($_POST['end_date']) ? sanitize_text_field(wp_unslash($_POST['end_date'])) : '';
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $start_time = isset($_POST['start_time']) ? sanitize_text_field(wp_unslash($_POST['start_time'])) : '';
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $end_time = isset($_POST['end_time']) ? sanitize_text_field(wp_unslash($_POST['end_time'])) : '';
@@ -44,6 +46,10 @@ if (!function_exists('stc_handle_create_delivery')) {
         // Validate
         if (empty($delivery_date)) {
             $errors['delivery_date'] = esc_html__('配信日を入力してください。', 'sale-time-checker');
+        }
+
+        if (empty($end_date)) {
+            $errors['end_date'] = esc_html__('終了日を入力してください。', 'sale-time-checker');
         }
 
         if (empty($start_time)) {
@@ -82,6 +88,7 @@ if (!function_exists('stc_handle_create_delivery')) {
         $_SESSION['stc_confirm_data'] = array(
             'mode' => 'create',
             'delivery_date' => $delivery_date,
+            'end_date' => $end_date,
             'start_time' => $start_time,
             'end_time' => $end_time,
             'total_sales' => $total_sales,
@@ -139,21 +146,22 @@ if (!function_exists('stc_create_shortcode')) {
             <form class="stc-record-form" method="post" enctype="multipart/form-data">
                 <?php wp_nonce_field('stc_create_action', 'stc_create_nonce'); ?>
 
-                <label class="stc-form-label" for="stc-create-date">
-                    <?php echo esc_html__('配信日', 'sale-time-checker'); ?>
-                </label>
-                <input 
-                    type="date" 
-                    id="stc-create-date" 
-                    name="delivery_date"
-                    class="stc-form-input"
-                    value="<?php echo isset($_POST['delivery_date']) ? esc_attr(sanitize_text_field(wp_unslash($_POST['delivery_date']))) : (isset($session_data['delivery_date']) ? esc_attr($session_data['delivery_date']) : ''); ?>"
-                    required>
-                <?php if (isset($errors['delivery_date'])) : ?>
-                    <span class="stc-error-message"><?php echo esc_html($errors['delivery_date']); ?></span>
-                <?php endif; ?>
-
                 <div class="stc-form-row">
+                    <div class="stc-form-group">
+                        <label class="stc-form-label" for="stc-create-date">
+                            <?php echo esc_html__('配信日', 'sale-time-checker'); ?>
+                        </label>
+                        <input 
+                            type="date" 
+                            id="stc-create-date" 
+                            name="delivery_date"
+                            class="stc-form-input"
+                            value="<?php echo isset($_POST['delivery_date']) ? esc_attr(sanitize_text_field(wp_unslash($_POST['delivery_date']))) : (isset($session_data['delivery_date']) ? esc_attr($session_data['delivery_date']) : ''); ?>"
+                            required>
+                        <?php if (isset($errors['delivery_date'])) : ?>
+                            <span class="stc-error-message"><?php echo esc_html($errors['delivery_date']); ?></span>
+                        <?php endif; ?>
+                    </div>
                     <div class="stc-form-group">
                         <label class="stc-form-label" for="stc-create-start">
                             <?php echo esc_html__('開始', 'sale-time-checker'); ?>
@@ -167,6 +175,24 @@ if (!function_exists('stc_create_shortcode')) {
                             required>
                         <?php if (isset($errors['start_time'])) : ?>
                             <span class="stc-error-message"><?php echo esc_html($errors['start_time']); ?></span>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div class="stc-form-row">
+                    <div class="stc-form-group">
+                        <label class="stc-form-label" for="stc-create-end-date">
+                            <?php echo esc_html__('終了日', 'sale-time-checker'); ?>
+                        </label>
+                        <input 
+                            type="date" 
+                            id="stc-create-end-date" 
+                            name="end_date"
+                            class="stc-form-input"
+                            value="<?php echo isset($_POST['end_date']) ? esc_attr(sanitize_text_field(wp_unslash($_POST['end_date']))) : (isset($session_data['end_date']) ? esc_attr($session_data['end_date']) : ''); ?>"
+                            required>
+                        <?php if (isset($errors['end_date'])) : ?>
+                            <span class="stc-error-message"><?php echo esc_html($errors['end_date']); ?></span>
                         <?php endif; ?>
                     </div>
                     <div class="stc-form-group">

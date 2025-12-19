@@ -31,6 +31,8 @@ if (!function_exists('stc_handle_confirm_save')) {
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $delivery_date = isset($_POST['delivery_date']) ? sanitize_text_field(wp_unslash($_POST['delivery_date'])) : '';
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $end_date = isset($_POST['end_date']) ? sanitize_text_field(wp_unslash($_POST['end_date'])) : '';
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $start_time = isset($_POST['start_time']) ? sanitize_text_field(wp_unslash($_POST['start_time'])) : '';
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $end_time = isset($_POST['end_time']) ? sanitize_text_field(wp_unslash($_POST['end_time'])) : '';
@@ -51,6 +53,7 @@ if (!function_exists('stc_handle_confirm_save')) {
             ]);
 
             update_post_meta($delivery_id, 'delivery_date', $delivery_date);
+            update_post_meta($delivery_id, 'end_date', $end_date);
             update_post_meta($delivery_id, 'start_time', $start_time);
             update_post_meta($delivery_id, 'end_time', $end_time);
             update_post_meta($delivery_id, 'total_sales', $total_sales);
@@ -82,6 +85,7 @@ if (!function_exists('stc_handle_confirm_save')) {
             if ($new_delivery_id) {
                 update_post_meta($new_delivery_id, 'user_id', $user_id);
                 update_post_meta($new_delivery_id, 'delivery_date', $delivery_date);
+                update_post_meta($new_delivery_id, 'end_date', $end_date);
                 update_post_meta($new_delivery_id, 'start_time', $start_time);
                 update_post_meta($new_delivery_id, 'end_time', $end_time);
                 update_post_meta($new_delivery_id, 'total_sales', $total_sales);
@@ -121,6 +125,7 @@ if (!function_exists('stc_confirm_shortcode')) {
         $mode = isset($data['mode']) ? $data['mode'] : 'create';
         $delivery_id = isset($data['delivery_id']) ? intval($data['delivery_id']) : 0;
         $delivery_date = isset($data['delivery_date']) ? $data['delivery_date'] : '';
+        $end_date = isset($data['end_date']) ? $data['end_date'] : '';
         $start_time = isset($data['start_time']) ? $data['start_time'] : '';
         $end_time = isset($data['end_time']) ? $data['end_time'] : '';
         $total_sales = isset($data['total_sales']) ? intval($data['total_sales']) : 0;
@@ -160,13 +165,20 @@ if (!function_exists('stc_confirm_shortcode')) {
 
             <div class="stc-confirm-content">
                 <div class="stc-confirm-row">
-                    <span class="stc-confirm-label"><?php echo esc_html__('配信日', 'sale-time-checker'); ?></span>
-                    <span class="stc-confirm-value"><?php echo esc_html($delivery_date); ?></span>
-                </div>
-
-                <div class="stc-confirm-row">
-                    <span class="stc-confirm-label"><?php echo esc_html__('時間', 'sale-time-checker'); ?></span>
-                    <span class="stc-confirm-value"><?php echo esc_html($start_time . '~' . $end_time); ?></span>
+                    <span class="stc-confirm-label"><?php echo esc_html__('配信期間', 'sale-time-checker'); ?></span>
+                    <span class="stc-confirm-value">
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <div><?php echo esc_html__('開始', 'sale-time-checker'); ?>　　<?php 
+                                $formatted_start_date = $delivery_date ? date('Y/m/d', strtotime($delivery_date)) : '';
+                                echo esc_html($formatted_start_date . ' ' . $start_time);
+                            ?></div>
+                            <div><?php echo esc_html__('終了', 'sale-time-checker'); ?>　　<?php 
+                                $actual_end_date = $end_date ? $end_date : $delivery_date;
+                                $formatted_end_date = $actual_end_date ? date('Y/m/d', strtotime($actual_end_date)) : '';
+                                echo esc_html($formatted_end_date . ' ' . $end_time);
+                            ?></div>
+                        </div>
+                    </span>
                 </div>
 
                 <div class="stc-confirm-row">
@@ -206,6 +218,7 @@ if (!function_exists('stc_confirm_shortcode')) {
                         <input type="hidden" name="delivery_id" value="<?php echo esc_attr($delivery_id); ?>">
                     <?php endif; ?>
                     <input type="hidden" name="delivery_date" value="<?php echo esc_attr($delivery_date); ?>">
+                    <input type="hidden" name="end_date" value="<?php echo esc_attr($end_date ? $end_date : $delivery_date); ?>">
                     <input type="hidden" name="start_time" value="<?php echo esc_attr($start_time); ?>">
                     <input type="hidden" name="end_time" value="<?php echo esc_attr($end_time); ?>">
                     <input type="hidden" name="total_sales" value="<?php echo esc_attr($total_sales); ?>">

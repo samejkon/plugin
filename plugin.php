@@ -254,12 +254,20 @@ if (!function_exists('stc_load_more_deliveries')) {
                 $post_id = get_the_ID();
                 
                 $delivery_date = get_post_meta($post_id, 'delivery_date', true);
+                $end_date = get_post_meta($post_id, 'end_date', true);
                 $start_time = get_post_meta($post_id, 'start_time', true);
                 $end_time = get_post_meta($post_id, 'end_time', true);
                 $total_sales = get_post_meta($post_id, 'total_sales', true);
                 
                 $formatted_date = $delivery_date ? date('Y/m/d', strtotime($delivery_date)) : '';
-                $time_range = $start_time && $end_time ? $start_time . '～' . $end_time : '';
+                
+                // Format time range
+                if ($start_time && $end_time) {
+                    $time_range = $start_time . '～' . $end_time;
+                } else {
+                    $time_range = '';
+                }
+                
                 $formatted_sales = $total_sales ? '¥' . number_format($total_sales) : '¥0';
                 
                 // Build detail URL

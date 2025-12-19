@@ -41,6 +41,8 @@ if (!function_exists('stc_handle_update_delivery')) {
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $delivery_date = isset($_POST['delivery_date']) ? sanitize_text_field(wp_unslash($_POST['delivery_date'])) : '';
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $end_date = isset($_POST['end_date']) ? sanitize_text_field(wp_unslash($_POST['end_date'])) : '';
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $start_time = isset($_POST['start_time']) ? sanitize_text_field(wp_unslash($_POST['start_time'])) : '';
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $end_time = isset($_POST['end_time']) ? sanitize_text_field(wp_unslash($_POST['end_time'])) : '';
@@ -52,6 +54,10 @@ if (!function_exists('stc_handle_update_delivery')) {
         // Validate
         if (empty($delivery_date)) {
             $errors['delivery_date'] = esc_html__('配信日を入力してください。', 'sale-time-checker');
+        }
+
+        if (empty($end_date)) {
+            $errors['end_date'] = esc_html__('終了日を入力してください。', 'sale-time-checker');
         }
 
         if (empty($start_time)) {
@@ -107,6 +113,7 @@ if (!function_exists('stc_handle_update_delivery')) {
             'mode' => 'update',
             'delivery_id' => $delivery_id,
             'delivery_date' => $delivery_date,
+            'end_date' => $end_date,
             'start_time' => $start_time,
             'end_time' => $end_time,
             'total_sales' => $total_sales,
@@ -169,6 +176,7 @@ if (!function_exists('stc_update_shortcode')) {
         
         if (!empty($session_data) && isset($session_data['mode']) && $session_data['mode'] === 'update' && isset($session_data['delivery_id']) && $session_data['delivery_id'] == $delivery_id) {
             $delivery_date = $session_data['delivery_date'];
+            $end_date = isset($session_data['end_date']) ? $session_data['end_date'] : '';
             $start_time = $session_data['start_time'];
             $end_time = $session_data['end_time'];
             $total_sales = $session_data['total_sales'];
@@ -180,6 +188,7 @@ if (!function_exists('stc_update_shortcode')) {
             unset($_SESSION['stc_confirm_data']);
         } else {
             $delivery_date = get_post_meta($delivery_id, 'delivery_date', true);
+            $end_date = get_post_meta($delivery_id, 'end_date', true);
             $start_time = get_post_meta($delivery_id, 'start_time', true);
             $end_time = get_post_meta($delivery_id, 'end_time', true);
             $total_sales = get_post_meta($delivery_id, 'total_sales', true);
@@ -218,21 +227,22 @@ if (!function_exists('stc_update_shortcode')) {
                 <input type="hidden" name="remove_before_screenshot" id="remove-before-screenshot" value="">
                 <input type="hidden" name="remove_after_screenshot" id="remove-after-screenshot" value="">
 
-                <label class="stc-form-label" for="stc-update-date">
-                    <?php echo esc_html__('配信日', 'sale-time-checker'); ?>
-                </label>
-                <input 
-                    type="date" 
-                    id="stc-update-date" 
-                    name="delivery_date"
-                    class="stc-form-input"
-                    value="<?php echo esc_attr($delivery_date); ?>"
-                    required>
-                <?php if (isset($errors['delivery_date'])) : ?>
-                    <span class="stc-error-message"><?php echo esc_html($errors['delivery_date']); ?></span>
-                <?php endif; ?>
-
                 <div class="stc-form-row">
+                    <div class="stc-form-group">
+                        <label class="stc-form-label" for="stc-update-date">
+                            <?php echo esc_html__('配信日', 'sale-time-checker'); ?>
+                        </label>
+                        <input 
+                            type="date" 
+                            id="stc-update-date" 
+                            name="delivery_date"
+                            class="stc-form-input"
+                            value="<?php echo esc_attr($delivery_date); ?>"
+                            required>
+                        <?php if (isset($errors['delivery_date'])) : ?>
+                            <span class="stc-error-message"><?php echo esc_html($errors['delivery_date']); ?></span>
+                        <?php endif; ?>
+                    </div>
                     <div class="stc-form-group">
                         <label class="stc-form-label" for="stc-update-start">
                             <?php echo esc_html__('開始', 'sale-time-checker'); ?>
@@ -246,6 +256,24 @@ if (!function_exists('stc_update_shortcode')) {
                             required>
                         <?php if (isset($errors['start_time'])) : ?>
                             <span class="stc-error-message"><?php echo esc_html($errors['start_time']); ?></span>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div class="stc-form-row">
+                    <div class="stc-form-group">
+                        <label class="stc-form-label" for="stc-update-end-date">
+                            <?php echo esc_html__('終了日', 'sale-time-checker'); ?>
+                        </label>
+                        <input 
+                            type="date" 
+                            id="stc-update-end-date" 
+                            name="end_date"
+                            class="stc-form-input"
+                            value="<?php echo esc_attr($end_date ? $end_date : $delivery_date); ?>"
+                            required>
+                        <?php if (isset($errors['end_date'])) : ?>
+                            <span class="stc-error-message"><?php echo esc_html($errors['end_date']); ?></span>
                         <?php endif; ?>
                     </div>
                     <div class="stc-form-group">

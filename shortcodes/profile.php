@@ -44,17 +44,29 @@ if (!function_exists('stc_profile_shortcode')) {
                 $all_deliveries->the_post();
                 $post_id = get_the_ID();
                 
+                $delivery_date = get_post_meta($post_id, 'delivery_date', true);
+                $end_date = get_post_meta($post_id, 'end_date', true);
                 $start_time = get_post_meta($post_id, 'start_time', true);
                 $end_time = get_post_meta($post_id, 'end_time', true);
                 $sales = get_post_meta($post_id, 'total_sales', true);
                 
                 $total_sales += intval($sales);
                 
-                if ($start_time && $end_time) {
-                    $start = strtotime($start_time);
-                    $end = strtotime($end_time);
-                    $hours = ($end - $start) / 3600;
+                if ($start_time && $end_time && $delivery_date) {
+                    // Use end_date if available, otherwise use delivery_date
+                    $actual_end_date = $end_date ? $end_date : $delivery_date;
                     
+                    // Combine date and time for accurate calculation
+                    $start_datetime = strtotime($delivery_date . ' ' . $start_time);
+                    $end_datetime = strtotime($actual_end_date . ' ' . $end_time);
+                    
+                    // If end time is earlier than start time on the same day, it means it's next day
+                    if ($end_datetime < $start_datetime && $actual_end_date === $delivery_date) {
+                        // Add 24 hours if end is before start on same day
+                        $end_datetime = strtotime($actual_end_date . ' ' . $end_time . ' +1 day');
+                    }
+                    
+                    $hours = ($end_datetime - $start_datetime) / 3600;
                     $total_hours += $hours;
                 }
             }
@@ -151,12 +163,20 @@ if (!function_exists('stc_profile_shortcode')) {
                             $post_id = get_the_ID();
                             
                             $delivery_date = get_post_meta($post_id, 'delivery_date', true);
+                            $end_date = get_post_meta($post_id, 'end_date', true);
                             $start_time = get_post_meta($post_id, 'start_time', true);
                             $end_time = get_post_meta($post_id, 'end_time', true);
                             $total_sales = get_post_meta($post_id, 'total_sales', true);
                             
                             $formatted_date = $delivery_date ? date('Y/m/d', strtotime($delivery_date)) : '';
-                            $time_range = $start_time && $end_time ? $start_time . '～' . $end_time : '';
+                            
+                            // Format time range
+                            if ($start_time && $end_time) {
+                                $time_range = $start_time . '～' . $end_time;
+                            } else {
+                                $time_range = '';
+                            }
+                            
                             $formatted_sales = $total_sales ? '¥' . number_format($total_sales) : '¥0';
                             
                             $detail_url = add_query_arg(array('view' => 'detail', 'id' => $post_id, 'readonly' => '1'), strtok(home_url(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))), '?'));

@@ -338,4 +338,27 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    // Avatar upload handler
+    const avatarInput = document.getElementById('stc-avatar-input');
+    const avatarForm = document.querySelector('.stc-avatar-upload-form');
+    
+    if (avatarInput && avatarForm) {
+        avatarInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const avatarImage = document.getElementById('stc-avatar-image');
+                    if (avatarImage) {
+                        avatarImage.src = e.target.result;
+                    }
+                };
+                reader.readAsDataURL(this.files[0]);
+                
+                // Auto submit form
+                avatarForm.submit();
+            }
+        });
+    }
+
 });

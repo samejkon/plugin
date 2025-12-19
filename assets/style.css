@@ -161,6 +161,7 @@
   background-color: #000000;
   padding: 20px 10px;
   position: relative;
+  text-align: center;
 }
 
 .stc-title {
@@ -180,7 +181,9 @@
 }
 
 .stc-img-my-page-container {
-  text-align: center;
+  position: relative;
+  display: inline-block;
+  margin: 0 auto;
 }
 
 .stc-my-page-image {
@@ -190,6 +193,39 @@
   object-fit: cover;
   border: 3px solid #ffffff;
   background-color: #333;
+}
+
+.stc-avatar-upload-form {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.stc-avatar-camera-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background-color: #e60013;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid #ffffff;
+  position: relative;
+  z-index: 10;
+  transition: background-color 0.3s ease;
+}
+
+.stc-avatar-camera-icon:hover {
+  background-color: #c50010;
+}
+
+.stc-avatar-camera-icon svg {
+  color: #ffffff;
+  width: 20px;
+  height: 20px;
 }
 
 .stc-my-page-name {

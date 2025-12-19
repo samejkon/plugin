@@ -5,14 +5,71 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Handle avatar upload
+ */
+if (!function_exists('stc_handle_avatar_upload')) {
+    function stc_handle_avatar_upload()
+    {
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        if (!isset($_POST['stc_upload_avatar']) || !isset($_FILES['avatar'])) {
+            return;
+        }
+
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        if (!isset($_POST['stc_avatar_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['stc_avatar_nonce'])), 'stc_avatar_upload')) {
+            return;
+        }
+
+        if (!stc_is_user_logged_in()) {
+            return;
+        }
+
+        $current_user = stc_get_current_user();
+        if (!$current_user) {
+            return;
+        }
+
+        $user_id = $current_user['id'];
+
+        if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
+            $upload = wp_handle_upload($_FILES['avatar'], array('test_form' => false));
+            if (isset($upload['url'])) {
+                update_post_meta($user_id, 'user_avatar', $upload['url']);
+            }
+        }
+
+        if (function_exists('get_permalink') && get_the_ID()) {
+            $base_url = get_permalink();
+        } elseif (isset($_SERVER['REQUEST_URI'])) {
+            $base_url = strtok(home_url(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))), '?');
+        } else {
+            $base_url = home_url('/');
+        }
+        $redirect_url = add_query_arg('view', 'mypage', $base_url);
+        wp_safe_redirect($redirect_url);
+        exit;
+    }
+}
+add_action('init', 'stc_handle_avatar_upload');
+
+/**
  * Shortcode: [stc_my_page]
  *
  */
 if (!function_exists('stc_my_page_shortcode')) {
     function stc_my_page_shortcode()
     {
+        stc_handle_avatar_upload();
+        
         $current_user = stc_get_current_user();
         $user_name = $current_user ? $current_user['name'] : 'Guest';
+        
+        // Get user avatar
+        $user_avatar = '';
+        if ($current_user) {
+            $user_avatar = get_post_meta($current_user['id'], 'user_avatar', true);
+        }
+        $avatar_url = $user_avatar ? $user_avatar : plugin_dir_url(dirname(__FILE__)) . 'assets/img/default.jpg';
 
         $total_sales = 0;
         $total_hours = 0;
@@ -37,17 +94,29 @@ if (!function_exists('stc_my_page_shortcode')) {
                     $all_deliveries->the_post();
                     $post_id = get_the_ID();
                     
+                    $delivery_date = get_post_meta($post_id, 'delivery_date', true);
+                    $end_date = get_post_meta($post_id, 'end_date', true);
                     $start_time = get_post_meta($post_id, 'start_time', true);
                     $end_time = get_post_meta($post_id, 'end_time', true);
                     $sales = get_post_meta($post_id, 'total_sales', true);
                     
                     $total_sales += intval($sales);
                     
-                    if ($start_time && $end_time) {
-                        $start = strtotime($start_time);
-                        $end = strtotime($end_time);
-                        $hours = ($end - $start) / 3600;
+                    if ($start_time && $end_time && $delivery_date) {
+                        // Use end_date if available, otherwise use delivery_date
+                        $actual_end_date = $end_date ? $end_date : $delivery_date;
                         
+                        // Combine date and time for accurate calculation
+                        $start_datetime = strtotime($delivery_date . ' ' . $start_time);
+                        $end_datetime = strtotime($actual_end_date . ' ' . $end_time);
+                        
+                        // If end time is earlier than start time on the same day, it means it's next day
+                        if ($end_datetime < $start_datetime && $actual_end_date === $delivery_date) {
+                            // Add 24 hours if end is before start on same day
+                            $end_datetime = strtotime($actual_end_date . ' ' . $end_time . ' +1 day');
+                        }
+                        
+                        $hours = ($end_datetime - $start_datetime) / 3600;
                         $total_hours += $hours;
                     }
                 }
@@ -68,9 +137,23 @@ if (!function_exists('stc_my_page_shortcode')) {
 
             <div class="stc-img-my-page-container">
                 <img
-                    src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'assets/img/default.jpg'); ?>"
+                    src="<?php echo esc_url($avatar_url); ?>"
                     alt="<?php esc_attr_e('my-page Image', 'sale-time-checker'); ?>"
-                    class="stc-my-page-image">
+                    class="stc-my-page-image"
+                    id="stc-avatar-image">
+                <?php if ($current_user) : ?>
+                <form method="post" enctype="multipart/form-data" class="stc-avatar-upload-form">
+                    <?php wp_nonce_field('stc_avatar_upload', 'stc_avatar_nonce'); ?>
+                    <input type="file" name="avatar" id="stc-avatar-input" accept="image/*" style="display: none;">
+                    <label for="stc-avatar-input" class="stc-avatar-camera-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                            <path d="M12 9c-1.626 0-3 1.374-3 3s1.374 3 3 3 3-1.374 3-3-1.374-3-3-3zm0 4c-.551 0-1-.449-1-1s.449-1 1-1 1 .449 1 1-.449 1-1 1z"/>
+                            <path d="M20 5h-2.586l-2.707-2.707A.996.996 0 0 0 14 2H10a.996.996 0 0 0-.707.293L6.586 5H4c-1.103 0-2 .897-2 2v11c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V7c0-1.103-.897-2-2-2zM4 18V7h3c.266 0 .52-.105.707-.293L10.414 4h3.172l2.707 2.707A.996.996 0 0 0 17 7h3v11H4z"/>
+                        </svg>
+                    </label>
+                    <input type="hidden" name="stc_upload_avatar" value="1">
+                </form>
+                <?php endif; ?>
             </div>
 
             <p class="stc-my-page-name"><?php echo esc_html($user_name); ?></p>
@@ -154,12 +237,20 @@ if (!function_exists('stc_my_page_shortcode')) {
                                 $post_id = get_the_ID();
                                 
                                 $delivery_date = get_post_meta($post_id, 'delivery_date', true);
+                                $end_date = get_post_meta($post_id, 'end_date', true);
                                 $start_time = get_post_meta($post_id, 'start_time', true);
                                 $end_time = get_post_meta($post_id, 'end_time', true);
                                 $total_sales = get_post_meta($post_id, 'total_sales', true);
                                 
                                 $formatted_date = $delivery_date ? date('Y/m/d', strtotime($delivery_date)) : '';
-                                $time_range = $start_time && $end_time ? $start_time . '～' . $end_time : '';
+                                
+                                // Format time range
+                                if ($start_time && $end_time) {
+                                    $time_range = $start_time . '～' . $end_time;
+                                } else {
+                                    $time_range = '';
+                                }
+                                
                                 $formatted_sales = $total_sales ? '¥' . number_format($total_sales) : '¥0';
                                 
                                 $detail_url = add_query_arg(array('view' => 'detail', 'id' => $post_id));
