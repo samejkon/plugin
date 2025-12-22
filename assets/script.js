@@ -405,4 +405,35 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // Delete delivery form handler with confirm
+    function attachDeleteFormListeners() {
+        const deleteForms = document.querySelectorAll('.stc-delete-form');
+        deleteForms.forEach(function(form) {
+            if (!form.hasAttribute('data-delete-attached')) {
+                form.setAttribute('data-delete-attached', 'true');
+                form.addEventListener('submit', function(e) {
+                    // Confirm before submitting
+                    if (!confirm('この配信記録を削除してもよろしいですか？')) {
+                        e.preventDefault();
+                        return false;
+                    }
+                    // Form will submit normally and page will reload
+                });
+            }
+        });
+    }
+    
+    // Initial attach
+    attachDeleteFormListeners();
+    
+    // Re-attach when new items are loaded via AJAX
+    const deleteFormObserver = new MutationObserver(function(mutations) {
+        attachDeleteFormListeners();
+    });
+    
+    deleteFormObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
 });

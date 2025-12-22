@@ -160,7 +160,7 @@
 
 .stc-my-page-container {
   background-color: #000000;
-  padding: 20px 10px;
+  padding: 5px;
   position: relative;
   text-align: center;
 }
@@ -441,15 +441,12 @@
   text-align: center;
 }
 
-.stc-history-item {
-  padding: 8px 0;
-}
 
 .stc-history-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
+  padding: 5px 0;
 }
 
 .stc-history-start {
@@ -475,12 +472,53 @@
 .stc-detail-button {
   background-color: #ffc107;
   color: #000;
-  padding: 10px 10px;
+  padding: 5px 10px;
   border-radius: 15px;
   text-decoration: none;
   font-size: 0.8em;
   font-weight: bold;
   margin-left: 10px;
+  display: inline-block;
+}
+
+.stc-delete-button {
+  background-color: #e60013;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 15px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-left: 10px;
+  transition: all 0.3s;
+}
+
+.stc-delete-button:hover {
+  background-color: #cc0011;
+  transform: scale(1.05);
+}
+
+.stc-delete-button:active {
+  transform: scale(0.95);
+}
+
+.stc-delete-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.stc-history-action {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+}
+
+.stc-delete-form {
+  display: inline;
+  margin: 0;
+  padding: 0;
 }
 
 .stc-my-page-container::before,
@@ -826,7 +864,7 @@ input[type="date"].stc-form-input::-webkit-calendar-picker-indicator {
   min-height: 100vh;
   background: #000;
   color: #fff;
-  padding: 20px;
+  padding: 10px;
 }
 
 .stc-record-card__head {

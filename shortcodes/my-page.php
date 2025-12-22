@@ -53,6 +53,66 @@ if (!function_exists('stc_handle_avatar_upload')) {
 add_action('init', 'stc_handle_avatar_upload');
 
 /**
+ * Handle delivery deletion
+ */
+if (!function_exists('stc_handle_delete_delivery')) {
+    function stc_handle_delete_delivery()
+    {
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        if (!isset($_POST['stc_delete_delivery']) || !isset($_POST['delivery_id'])) {
+            return;
+        }
+
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        if (!isset($_POST['stc_delete_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['stc_delete_nonce'])), 'stc_delete_delivery')) {
+            return;
+        }
+
+        if (!stc_is_user_logged_in()) {
+            return;
+        }
+
+        $current_user = stc_get_current_user();
+        if (!$current_user) {
+            return;
+        }
+
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        $delivery_id = isset($_POST['delivery_id']) ? intval($_POST['delivery_id']) : 0;
+
+        if (!$delivery_id) {
+            return;
+        }
+
+        // Verify the delivery belongs to the current user
+        $delivery = get_post($delivery_id);
+        if (!$delivery || $delivery->post_type !== 'stc_delivery') {
+            return;
+        }
+
+        $delivery_user_id = get_post_meta($delivery_id, 'user_id', true);
+        if (intval($delivery_user_id) !== intval($current_user['id'])) {
+            return;
+        }
+
+        // Delete the delivery
+        wp_delete_post($delivery_id, true);
+
+        if (function_exists('get_permalink') && get_the_ID()) {
+            $base_url = get_permalink();
+        } elseif (isset($_SERVER['REQUEST_URI'])) {
+            $base_url = strtok(home_url(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))), '?');
+        } else {
+            $base_url = home_url('/');
+        }
+        $redirect_url = add_query_arg('view', 'mypage', $base_url);
+        wp_safe_redirect($redirect_url);
+        exit;
+    }
+}
+add_action('init', 'stc_handle_delete_delivery');
+
+/**
  * Handle user name update
  */
 if (!function_exists('stc_handle_update_user_name')) {
@@ -382,6 +442,16 @@ if (!function_exists('stc_my_page_shortcode')) {
                                         <a href="<?php echo esc_url($detail_url); ?>" class="stc-detail-button">
                                             <?php echo esc_html__('詳細', 'sale-time-checker'); ?>
                                         </a>
+                                        <form method="post" class="stc-delete-form" style="display: inline;">
+                                            <?php wp_nonce_field('stc_delete_delivery', 'stc_delete_nonce'); ?>
+                                            <input type="hidden" name="stc_delete_delivery" value="1">
+                                            <input type="hidden" name="delivery_id" value="<?php echo esc_attr($post_id); ?>">
+                                            <button type="submit" 
+                                                    class="stc-delete-button" 
+                                                    title="<?php echo esc_attr__('削除', 'sale-time-checker'); ?>">
+                                                <?php echo esc_html__('削除', 'sale-time-checker'); ?>
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                                 <?php

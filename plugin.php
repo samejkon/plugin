@@ -302,6 +302,15 @@ if (!function_exists('stc_load_more_deliveries')) {
                 $html .= '<div class="stc-history-sales">' . esc_html($formatted_sales) . '</div>';
                 $html .= '<div class="stc-history-action">';
                 $html .= '<a href="' . esc_url($detail_url) . '" class="stc-detail-button">' . esc_html__('詳細', 'sale-time-checker') . '</a>';
+                if ($type === 'mypage') {
+                    $delete_nonce = wp_create_nonce('stc_delete_delivery');
+                    $html .= '<form method="post" class="stc-delete-form" style="display: inline;">';
+                    $html .= '<input type="hidden" name="stc_delete_nonce" value="' . esc_attr($delete_nonce) . '">';
+                    $html .= '<input type="hidden" name="stc_delete_delivery" value="1">';
+                    $html .= '<input type="hidden" name="delivery_id" value="' . esc_attr($post_id) . '">';
+                    $html .= '<button type="submit" class="stc-delete-button" title="' . esc_attr__('削除', 'sale-time-checker') . '">' . esc_html__('削除', 'sale-time-checker') . '</button>';
+                    $html .= '</form>';
+                }
                 $html .= '</div>';
                 $html .= '</div>';
             }
