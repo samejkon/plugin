@@ -40,6 +40,9 @@ if (!function_exists('stc_rankings_shortcode')) {
                         'posts_per_page' => -1,
                     ));
 
+                    // Get current month
+                    $current_month = date('Y-m');
+                    
                     $users_stats = array();
 
                     if ($users_query->have_posts()) {
@@ -51,9 +54,10 @@ if (!function_exists('stc_rankings_shortcode')) {
                             $total_sales = 0;
                             $total_hours = 0;
 
+                            // Get all deliveries for this user
                             $deliveries = new WP_Query(array(
                                 'post_type' => 'stc_delivery',
-                                'posts_per_page' => 5,
+                                'posts_per_page' => -1,
                                 'meta_query' => array(
                                     array(
                                         'key' => 'user_id',
@@ -74,34 +78,43 @@ if (!function_exists('stc_rankings_shortcode')) {
                                     $end_time = get_post_meta($delivery_id, 'end_time', true);
                                     $sales = get_post_meta($delivery_id, 'total_sales', true);
 
-                                    $total_sales += intval($sales);
+                                    // Use end_date if available, otherwise use delivery_date
+                                    $actual_end_date = $end_date ? $end_date : $delivery_date;
+                                    
+                                    // Check if delivery belongs to current month (based on end_date)
+                                    $end_month = $actual_end_date ? date('Y-m', strtotime($actual_end_date)) : '';
+                                    
+                                    // Only count deliveries from current month
+                                    if ($end_month === $current_month) {
+                                        $total_sales += intval($sales);
 
-                                    if ($start_time && $end_time && $delivery_date) {
-                                        // Use end_date if available, otherwise use delivery_date
-                                        $actual_end_date = $end_date ? $end_date : $delivery_date;
-                                        
-                                        // Combine date and time for accurate calculation
-                                        $start_datetime = strtotime($delivery_date . ' ' . $start_time);
-                                        $end_datetime = strtotime($actual_end_date . ' ' . $end_time);
-                                        
-                                        // If end time is earlier than start time on the same day, it means it's next day
-                                        if ($end_datetime < $start_datetime && $actual_end_date === $delivery_date) {
-                                            // Add 24 hours if end is before start on same day
-                                            $end_datetime = strtotime($actual_end_date . ' ' . $end_time . ' +1 day');
+                                        if ($start_time && $end_time && $delivery_date) {
+                                            // Combine date and time for accurate calculation
+                                            $start_datetime = strtotime($delivery_date . ' ' . $start_time);
+                                            $end_datetime = strtotime($actual_end_date . ' ' . $end_time);
+                                            
+                                            // If end time is earlier than start time on the same day, it means it's next day
+                                            if ($end_datetime < $start_datetime && $actual_end_date === $delivery_date) {
+                                                // Add 24 hours if end is before start on same day
+                                                $end_datetime = strtotime($actual_end_date . ' ' . $end_time . ' +1 day');
+                                            }
+                                            
+                                            $hours = ($end_datetime - $start_datetime) / 3600;
+                                            $total_hours += $hours;
                                         }
-                                        
-                                        $hours = ($end_datetime - $start_datetime) / 3600;
-                                        $total_hours += $hours;
                                     }
                                 }
                                 wp_reset_postdata();
                                 
-                                $users_stats[] = array(
-                                    'user_id' => $user_id,
-                                    'name' => $user_name,
-                                    'total_sales' => $total_sales,
-                                    'total_hours' => $total_hours,
-                                );
+                                // Only add user to stats if they have deliveries in current month
+                                if ($total_sales > 0 || $total_hours > 0) {
+                                    $users_stats[] = array(
+                                        'user_id' => $user_id,
+                                        'name' => $user_name,
+                                        'total_sales' => $total_sales,
+                                        'total_hours' => $total_hours,
+                                    );
+                                }
                             }
                         }
                         wp_reset_postdata();

@@ -361,4 +361,48 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // User name edit handler
+    const nameEditBtn = document.getElementById('stc-name-edit-btn');
+    const nameSaveBtn = document.getElementById('stc-name-save-btn');
+    const nameDisplay = document.getElementById('stc-user-name-display');
+    const nameInput = document.getElementById('stc-user-name-input');
+    const nameSaveForm = document.getElementById('stc-name-save-form');
+    const nameSaveInput = document.getElementById('stc-name-save-input');
+    
+    if (nameEditBtn && nameDisplay && nameInput && nameSaveForm && nameSaveBtn) {
+        nameEditBtn.addEventListener('click', function() {
+            // Switch to edit mode
+            nameDisplay.style.display = 'none';
+            nameEditBtn.style.display = 'none';
+            nameInput.style.display = 'block';
+            nameSaveForm.style.display = 'inline-block';
+            nameInput.focus();
+            nameInput.select();
+        });
+        
+        nameSaveForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const newName = nameInput.value.trim();
+            if (newName) {
+                nameSaveInput.value = newName;
+                nameSaveForm.submit();
+            }
+        });
+        
+        // Also allow Enter key to save
+        nameInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                nameSaveForm.dispatchEvent(new Event('submit'));
+            } else if (e.key === 'Escape') {
+                // Cancel edit
+                nameInput.style.display = 'none';
+                nameSaveForm.style.display = 'none';
+                nameDisplay.style.display = 'block';
+                nameEditBtn.style.display = 'inline-block';
+                nameInput.value = nameDisplay.textContent;
+            }
+        });
+    }
+
 });

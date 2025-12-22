@@ -26,6 +26,9 @@ if (!function_exists('stc_profile_shortcode')) {
         $user_avatar = get_post_meta($viewed_user_id, 'user_avatar', true);
         $avatar_url = $user_avatar ? $user_avatar : plugin_dir_url(dirname(__FILE__)) . 'assets/img/default.jpg';
         
+        // Get current month
+        $current_month = date('Y-m');
+        
         $total_sales = 0;
         $total_hours = 0;
         
@@ -52,24 +55,30 @@ if (!function_exists('stc_profile_shortcode')) {
                 $end_time = get_post_meta($post_id, 'end_time', true);
                 $sales = get_post_meta($post_id, 'total_sales', true);
                 
-                $total_sales += intval($sales);
+                // Use end_date if available, otherwise use delivery_date
+                $actual_end_date = $end_date ? $end_date : $delivery_date;
                 
-                if ($start_time && $end_time && $delivery_date) {
-                    // Use end_date if available, otherwise use delivery_date
-                    $actual_end_date = $end_date ? $end_date : $delivery_date;
+                // Check if delivery belongs to current month (based on end_date)
+                $end_month = $actual_end_date ? date('Y-m', strtotime($actual_end_date)) : '';
+                
+                // Only count deliveries from current month
+                if ($end_month === $current_month) {
+                    $total_sales += intval($sales);
                     
-                    // Combine date and time for accurate calculation
-                    $start_datetime = strtotime($delivery_date . ' ' . $start_time);
-                    $end_datetime = strtotime($actual_end_date . ' ' . $end_time);
-                    
-                    // If end time is earlier than start time on the same day, it means it's next day
-                    if ($end_datetime < $start_datetime && $actual_end_date === $delivery_date) {
-                        // Add 24 hours if end is before start on same day
-                        $end_datetime = strtotime($actual_end_date . ' ' . $end_time . ' +1 day');
+                    if ($start_time && $end_time && $delivery_date) {
+                        // Combine date and time for accurate calculation
+                        $start_datetime = strtotime($delivery_date . ' ' . $start_time);
+                        $end_datetime = strtotime($actual_end_date . ' ' . $end_time);
+                        
+                        // If end time is earlier than start time on the same day, it means it's next day
+                        if ($end_datetime < $start_datetime && $actual_end_date === $delivery_date) {
+                            // Add 24 hours if end is before start on same day
+                            $end_datetime = strtotime($actual_end_date . ' ' . $end_time . ' +1 day');
+                        }
+                        
+                        $hours = ($end_datetime - $start_datetime) / 3600;
+                        $total_hours += $hours;
                     }
-                    
-                    $hours = ($end_datetime - $start_datetime) / 3600;
-                    $total_hours += $hours;
                 }
             }
             wp_reset_postdata();
@@ -98,7 +107,7 @@ if (!function_exists('stc_profile_shortcode')) {
 
             <p class="stc-my-page-name"><?php echo esc_html($user_name); ?></p>
 
-            <p class="stc-monthly-stats-title"><?php echo esc_html__('月間実績', 'sale-time-checker'); ?></p>
+            <p class="stc-monthly-stats-title"><?php echo esc_html__('当月実績', 'sale-time-checker'); ?></p>
 
             <div class="stc-stats-grid">
                 <div class="stc-stat-item">
@@ -170,9 +179,9 @@ if (!function_exists('stc_profile_shortcode')) {
                             $end_time = get_post_meta($post_id, 'end_time', true);
                             $total_sales = get_post_meta($post_id, 'total_sales', true);
                             
-                            $formatted_start_date = $delivery_date ? date('Y/m/d', strtotime($delivery_date)) : '';
+                            $formatted_start_date = $delivery_date ? stc_format_date_with_day($delivery_date) : '';
                             $actual_end_date = $end_date ? $end_date : $delivery_date;
-                            $formatted_end_date = $actual_end_date ? date('Y/m/d', strtotime($actual_end_date)) : '';
+                            $formatted_end_date = $actual_end_date ? stc_format_date_with_day($actual_end_date) : '';
                             
                             $start_datetime = $formatted_start_date && $start_time ? $formatted_start_date . ' ' . $start_time : '';
                             $end_datetime = $formatted_end_date && $end_time ? $formatted_end_date . ' ' . $end_time : '';
@@ -183,6 +192,7 @@ if (!function_exists('stc_profile_shortcode')) {
                             ?>
                             <div class="stc-history-item">
                                 <div class="stc-history-start"><?php echo esc_html($start_datetime); ?></div>
+                                <div>~</div>
                                 <div class="stc-history-end"><?php echo esc_html($end_datetime); ?></div>
                                 <div class="stc-history-sales"><?php echo esc_html($formatted_sales); ?></div>
                                 <div class="stc-history-action">

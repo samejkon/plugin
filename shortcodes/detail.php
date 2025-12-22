@@ -79,12 +79,12 @@ if (!function_exists('stc_detail_shortcode')) {
                     <span class="stc-confirm-value">
                         <div style="display: flex; flex-direction: column; gap: 4px;">
                             <div><?php echo esc_html__('開始', 'sale-time-checker'); ?>　　<?php 
-                                $formatted_start_date = $delivery_date ? date('Y/m/d', strtotime($delivery_date)) : '';
+                                $formatted_start_date = $delivery_date ? stc_format_date_with_day($delivery_date) : '';
                                 echo esc_html($formatted_start_date . ' ' . $start_time);
                             ?></div>
                             <div><?php echo esc_html__('終了', 'sale-time-checker'); ?>　　<?php 
                                 $actual_end_date = $end_date ? $end_date : $delivery_date;
-                                $formatted_end_date = $actual_end_date ? date('Y/m/d', strtotime($actual_end_date)) : '';
+                                $formatted_end_date = $actual_end_date ? stc_format_date_with_day($actual_end_date) : '';
                                 echo esc_html($formatted_end_date . ' ' . $end_time);
                             ?></div>
                         </div>

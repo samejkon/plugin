@@ -133,6 +133,25 @@ if (!function_exists('stc_get_current_user')) {
 }
 
 /**
+ * Format date with Japanese day of week
+ */
+if (!function_exists('stc_format_date_with_day')) {
+    function stc_format_date_with_day($date_string)
+    {
+        if (empty($date_string)) {
+            return '';
+        }
+        
+        $day_names = array('日', '月', '火', '水', '木', '金', '土');
+        $timestamp = strtotime($date_string);
+        $day_of_week = date('w', $timestamp); // 0 = Sunday, 6 = Saturday
+        $formatted_date = date('Y/m/d', $timestamp);
+        
+        return $formatted_date . '(' . $day_names[$day_of_week] . ')';
+    }
+}
+
+/**
  * Logout user
  */
 if (!function_exists('stc_logout_user')) {
@@ -259,9 +278,9 @@ if (!function_exists('stc_load_more_deliveries')) {
                 $end_time = get_post_meta($post_id, 'end_time', true);
                 $total_sales = get_post_meta($post_id, 'total_sales', true);
                 
-                $formatted_start_date = $delivery_date ? date('Y/m/d', strtotime($delivery_date)) : '';
+                $formatted_start_date = $delivery_date ? stc_format_date_with_day($delivery_date) : '';
                 $actual_end_date = $end_date ? $end_date : $delivery_date;
-                $formatted_end_date = $actual_end_date ? date('Y/m/d', strtotime($actual_end_date)) : '';
+                $formatted_end_date = $actual_end_date ? stc_format_date_with_day($actual_end_date) : '';
                 
                 $start_datetime = $formatted_start_date && $start_time ? $formatted_start_date . ' ' . $start_time : '';
                 $end_datetime = $formatted_end_date && $end_time ? $formatted_end_date . ' ' . $end_time : '';
@@ -269,7 +288,7 @@ if (!function_exists('stc_load_more_deliveries')) {
                 $formatted_sales = $total_sales ? '¥' . number_format($total_sales) : '¥0';
                 
                 // Build detail URL
-                $base_url = home_url('/');
+                $base_url = home_url('/my-page/');
                 if ($type === 'profile') {
                     $detail_url = add_query_arg(array('view' => 'detail', 'id' => $post_id, 'readonly' => '1'), $base_url);
                 } else {
@@ -278,6 +297,7 @@ if (!function_exists('stc_load_more_deliveries')) {
                 
                 $html .= '<div class="stc-history-item">';
                 $html .= '<div class="stc-history-start">' . esc_html($start_datetime) . '</div>';
+                $html .= '<div>~</div>';
                 $html .= '<div class="stc-history-end">' . esc_html($end_datetime) . '</div>';
                 $html .= '<div class="stc-history-sales">' . esc_html($formatted_sales) . '</div>';
                 $html .= '<div class="stc-history-action">';
