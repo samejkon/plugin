@@ -434,9 +434,15 @@ if (!function_exists('stc_my_page_shortcode')) {
                                 $detail_url = add_query_arg(array('view' => 'detail', 'id' => $post_id));
                                 ?>
                                 <div class="stc-history-item">
-                                    <div class="stc-history-start"><?php echo esc_html($start_datetime); ?></div>
+                                    <div class="stc-history-start">
+                                        <div class="stc-history-date"><?php echo esc_html($formatted_start_date); ?></div>
+                                        <div class="stc-history-time"><?php echo esc_html($start_time); ?></div>
+                                    </div>
                                     <div>~</div>
-                                    <div class="stc-history-end"><?php echo esc_html($end_datetime); ?></div>
+                                    <div class="stc-history-end">
+                                        <div class="stc-history-date"><?php echo esc_html($formatted_end_date); ?></div>
+                                        <div class="stc-history-time"><?php echo esc_html($end_time); ?></div>
+                                    </div>
                                     <div class="stc-history-sales"><?php echo esc_html($formatted_sales); ?></div>
                                     <div class="stc-history-action">
                                         <a href="<?php echo esc_url($detail_url); ?>" class="stc-detail-button">

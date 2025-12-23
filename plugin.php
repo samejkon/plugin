@@ -187,25 +187,28 @@ if (!function_exists('stc_enqueue_assets')) {
     {
         $plugin_url = plugin_dir_url(__FILE__);
         $plugin_dir = plugin_dir_path(__FILE__);
-        $version = '1.0.0';
 
         $css_file = $plugin_dir . 'assets/style.css';
         if (file_exists($css_file)) {
+            // Use file modification time as version to bust cache
+            $css_version = filemtime($css_file);
             wp_enqueue_style(
                 'stc-style',
                 $plugin_url . 'assets/style.css',
                 array(),
-                $version
+                $css_version
             );
         }
 
         $js_file = $plugin_dir . 'assets/script.js';
         if (file_exists($js_file)) {
+            // Use file modification time as version to bust cache
+            $js_version = filemtime($js_file);
             wp_enqueue_script(
                 'stc-script',
                 $plugin_url . 'assets/script.js',
                 array('jquery'),
-                $version,
+                $js_version,
                 true
             );
             wp_localize_script('stc-script', 'stcAjax', array(
@@ -296,9 +299,15 @@ if (!function_exists('stc_load_more_deliveries')) {
                 }
                 
                 $html .= '<div class="stc-history-item">';
-                $html .= '<div class="stc-history-start">' . esc_html($start_datetime) . '</div>';
+                $html .= '<div class="stc-history-start">';
+                $html .= '<div class="stc-history-date">' . esc_html($formatted_start_date) . '</div>';
+                $html .= '<div class="stc-history-time">' . esc_html($start_time) . '</div>';
+                $html .= '</div>';
                 $html .= '<div>~</div>';
-                $html .= '<div class="stc-history-end">' . esc_html($end_datetime) . '</div>';
+                $html .= '<div class="stc-history-end">';
+                $html .= '<div class="stc-history-date">' . esc_html($formatted_end_date) . '</div>';
+                $html .= '<div class="stc-history-time">' . esc_html($end_time) . '</div>';
+                $html .= '</div>';
                 $html .= '<div class="stc-history-sales">' . esc_html($formatted_sales) . '</div>';
                 $html .= '<div class="stc-history-action">';
                 $html .= '<a href="' . esc_url($detail_url) . '" class="stc-detail-button">' . esc_html__('詳細', 'sale-time-checker') . '</a>';

@@ -452,11 +452,28 @@
 .stc-history-start {
   font-size: 0.9em;
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .stc-history-end {
   font-size: 0.9em;
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stc-history-date {
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+
+.stc-history-time {
+  line-height: 1.2;
+  font-size: 0.85em;
+  opacity: 0.9;
 }
 
 .stc-history-sales {
