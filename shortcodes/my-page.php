@@ -188,13 +188,18 @@ if (!function_exists('stc_my_page_shortcode')) {
         // Total stats (all time)
         $total_sales = 0;
         $total_hours = 0;
+        
+        // Monthly stats data for all months with data
+        $monthly_stats = array();
+        $years_list = array();
+        $months_list = array();
+        $current_month = date('Y-m');
+        $previous_month = date('Y-m', strtotime('first day of last month'));
+        $previous_year = date('Y', strtotime('first day of last month'));
+        $previous_month_num = date('n', strtotime('first day of last month'));
 
         if ($current_user) {
             $user_id = $current_user['id'];
-            
-            // Get current month and previous month
-            $current_month = date('Y-m');
-            $previous_month = date('Y-m', strtotime('first day of last month'));
             
             $all_deliveries = new WP_Query(array(
                 'post_type' => 'stc_delivery',
@@ -250,12 +255,55 @@ if (!function_exists('stc_my_page_shortcode')) {
                             $previous_month_sales += intval($sales);
                             $previous_month_hours += $hours;
                         }
+                        
+                        // Add to monthly stats for all months
+                        if (!isset($monthly_stats[$end_month])) {
+                            $monthly_stats[$end_month] = array(
+                                'sales' => 0,
+                                'hours' => 0
+                            );
+                        }
+                        $monthly_stats[$end_month]['sales'] += intval($sales);
+                        $monthly_stats[$end_month]['hours'] += $hours;
+                        
+                        // Track years and months
+                        if ($end_month) {
+                            $year = date('Y', strtotime($end_month . '-01'));
+                            $month = date('n', strtotime($end_month . '-01'));
+                            if (!in_array($year, $years_list)) {
+                                $years_list[] = $year;
+                            }
+                            if (!in_array($month, $months_list)) {
+                                $months_list[] = $month;
+                            }
+                        }
                     } else {
                         // Even without time, count sales in appropriate month
                         if ($end_month === $current_month) {
                             $current_month_sales += intval($sales);
                         } elseif ($end_month === $previous_month) {
                             $previous_month_sales += intval($sales);
+                        }
+                        
+                        // Add to monthly stats for all months
+                        if (!isset($monthly_stats[$end_month])) {
+                            $monthly_stats[$end_month] = array(
+                                'sales' => 0,
+                                'hours' => 0
+                            );
+                        }
+                        $monthly_stats[$end_month]['sales'] += intval($sales);
+                        
+                        // Track years and months
+                        if ($end_month) {
+                            $year = date('Y', strtotime($end_month . '-01'));
+                            $month = date('n', strtotime($end_month . '-01'));
+                            if (!in_array($year, $years_list)) {
+                                $years_list[] = $year;
+                            }
+                            if (!in_array($month, $months_list)) {
+                                $months_list[] = $month;
+                            }
                         }
                     }
                 }
@@ -268,6 +316,24 @@ if (!function_exists('stc_my_page_shortcode')) {
         $current_month_sales_formatted = number_format($current_month_sales);
         $current_month_hours_formatted = number_format($current_month_hours, 1);
         $total_hours_formatted = number_format($total_hours, 1);
+        
+        // Sort years and months
+        rsort($years_list);
+        sort($months_list);
+        
+        // If no data, add at least current year and previous year
+        if (empty($years_list)) {
+            $current_year = date('Y');
+            $years_list[] = $current_year;
+            if ($previous_year != $current_year) {
+                $years_list[] = $previous_year;
+            }
+        }
+        
+        // If no months, add all 12 months
+        if (empty($months_list)) {
+            $months_list = range(1, 12);
+        }
 
     ob_start();
 ?>
@@ -325,15 +391,51 @@ if (!function_exists('stc_my_page_shortcode')) {
                 <?php endif; ?>
             </div>
 
-            <p class="stc-monthly-stats-title"><?php echo esc_html__('前月実績', 'sale-time-checker'); ?></p>
+            <div class="stc-monthly-stats-header">
+                <div class="stc-month-selector">
+                    <button type="button" class="stc-month-selector-btn" id="stc-month-selector-btn">
+                        <span class="stc-month-selector-text" id="stc-month-selector-text">
+                            <?php echo esc_html($previous_year . '年' . $previous_month_num . '月 実績'); ?>
+                        </span>
+                        <span class="stc-month-selector-arrow">▼</span>
+                    </button>
+                    <div class="stc-month-selector-dropdown" id="stc-month-selector-dropdown" style="display: none;">
+                        <div class="stc-month-selector-controls">
+                            <select id="stc-year-select" class="stc-year-select">
+                                <?php foreach ($years_list as $year): ?>
+                                    <option value="<?php echo esc_attr($year); ?>" 
+                                            <?php echo ($year == $previous_year) ? 'selected' : ''; ?>>
+                                        <?php echo esc_html($year . '年'); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <select id="stc-month-select" class="stc-month-select">
+                                <?php for ($m = 1; $m <= 12; $m++): ?>
+                                    <option value="<?php echo esc_attr($m); ?>" 
+                                            <?php echo ($m == $previous_month_num) ? 'selected' : ''; ?>>
+                                        <?php echo esc_html($m . '月'); ?>
+                                    </option>
+                                <?php endfor; ?>
+                            </select>
+                        </div>
+                        <button type="button" class="stc-month-selector-apply" id="stc-month-selector-apply">
+                            <?php echo esc_html__('適用', 'sale-time-checker'); ?>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <script type="application/json" id="stc-monthly-stats-data">
+                <?php echo json_encode($monthly_stats); ?>
+            </script>
 
-            <div class="stc-stats-grid">
+            <div class="stc-stats-grid" id="stc-previous-month-stats">
                 <div class="stc-stat-item">
-                    <p class="stc-stat-value">¥<?php echo esc_html($previous_month_sales_formatted); ?></p>
+                    <p class="stc-stat-value" id="stc-selected-month-sales">¥<?php echo esc_html($previous_month_sales_formatted); ?></p>
                     <span class="stc-stat-label"><?php echo esc_html__('売上', 'sale-time-checker'); ?></span>
                 </div>
                 <div class="stc-stat-item">
-                    <p class="stc-stat-value"><?php echo esc_html($previous_month_hours_formatted); ?></p>
+                    <p class="stc-stat-value" id="stc-selected-month-hours"><?php echo esc_html($previous_month_hours_formatted); ?></p>
                     <span class="stc-stat-label"><?php echo esc_html__('累計配信時間', 'sale-time-checker'); ?></span>
                 </div>
             </div>

@@ -278,6 +278,122 @@
   height: 20px;
 }
 
+.stc-monthly-stats-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.stc-month-selector {
+  position: relative;
+  display: inline-block;
+}
+
+.stc-month-selector-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 2px solid #ffc107;
+  color: #ffc107;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85em;
+  transition: all 0.3s;
+  font-family: 'Cabin', sans-serif;
+}
+
+.stc-month-selector-btn:hover {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.stc-month-selector-text {
+  white-space: nowrap;
+}
+
+.stc-month-selector-arrow {
+  font-size: 0.7em;
+  transition: transform 0.3s;
+}
+
+.stc-month-selector-btn:hover .stc-month-selector-arrow {
+  transform: translateY(2px);
+}
+
+.stc-month-selector-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #1a1a1a;
+  border: 2px solid #ffc107;
+  border-radius: 10px;
+  padding: 15px;
+  z-index: 1000;
+  min-width: 200px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.stc-month-selector-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.stc-year-select,
+.stc-month-select {
+  flex: 1;
+  background-color: #000;
+  color: #fff;
+  border: 1px solid #ffc107;
+  border-radius: 5px;
+  padding: 8px;
+  font-size: 0.9em;
+  font-family: 'Cabin', sans-serif;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffc107' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 12px;
+  padding-right: 30px;
+}
+
+.stc-year-select:focus,
+.stc-month-select:focus {
+  outline: none;
+  border-color: #ffd54f;
+}
+
+.stc-year-select option,
+.stc-month-select option {
+  background-color: #000;
+  color: #fff;
+}
+
+.stc-month-selector-apply {
+  width: 100%;
+  background-color: #ffc107;
+  color: #000;
+  border: none;
+  border-radius: 5px;
+  padding: 8px;
+  font-size: 0.9em;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: 'Cabin', sans-serif;
+  transition: all 0.3s;
+}
+
+.stc-month-selector-apply:hover {
+  background-color: #ffd54f;
+  transform: scale(1.02);
+}
+
 .stc-monthly-stats-title {
   text-align: center;
   font-size: 0.85em;

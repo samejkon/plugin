@@ -436,4 +436,111 @@ document.addEventListener("DOMContentLoaded", function () {
         subtree: true
     });
 
+    // Monthly stats selector handler (modal with year and month)
+    const monthSelectorBtn = document.getElementById('stc-month-selector-btn');
+    const monthSelectorDropdown = document.getElementById('stc-month-selector-dropdown');
+    const yearSelect = document.getElementById('stc-year-select');
+    const monthSelect = document.getElementById('stc-month-select');
+    const monthSelectorText = document.getElementById('stc-month-selector-text');
+    const monthSelectorApply = document.getElementById('stc-month-selector-apply');
+    const selectedMonthSales = document.getElementById('stc-selected-month-sales');
+    const selectedMonthHours = document.getElementById('stc-selected-month-hours');
+    const monthlyStatsData = document.getElementById('stc-monthly-stats-data');
+    
+    let currentSelectedYear = yearSelect ? yearSelect.value : '';
+    let currentSelectedMonth = monthSelect ? monthSelect.value : '';
+    
+    function updateMonthlyStats(year, month) {
+        if (!selectedMonthSales || !selectedMonthHours) {
+            return;
+        }
+        
+        // Format month with leading zero if needed
+        const monthKey = year + '-' + (parseInt(month) < 10 ? '0' : '') + month;
+        
+        let sales = 0;
+        let hours = 0;
+        
+        // Get data from JSON if available
+        if (monthlyStatsData) {
+            try {
+                const statsData = JSON.parse(monthlyStatsData.textContent);
+                if (statsData[monthKey]) {
+                    sales = parseFloat(statsData[monthKey].sales) || 0;
+                    hours = parseFloat(statsData[monthKey].hours) || 0;
+                }
+            } catch (e) {
+                console.error('Error parsing monthly stats data:', e);
+            }
+        }
+        
+        // Format and update sales
+        selectedMonthSales.textContent = '¥' + Math.floor(sales).toLocaleString('ja-JP');
+        
+        // Format and update hours
+        selectedMonthHours.textContent = hours.toLocaleString('ja-JP', {
+            minimumFractionDigits: 1,
+            maximumFractionDigits: 1
+        });
+    }
+    
+    function updateSelectorText(year, month) {
+        if (monthSelectorText) {
+            monthSelectorText.textContent = year + '年' + month + '月 実績';
+        }
+    }
+    
+    // Toggle dropdown
+    if (monthSelectorBtn && monthSelectorDropdown) {
+        monthSelectorBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const isVisible = monthSelectorDropdown.style.display !== 'none';
+            monthSelectorDropdown.style.display = isVisible ? 'none' : 'block';
+            
+            // Update arrow rotation
+            const arrow = monthSelectorBtn.querySelector('.stc-month-selector-arrow');
+            if (arrow) {
+                arrow.style.transform = isVisible ? 'rotate(0deg)' : 'rotate(180deg)';
+            }
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (monthSelectorDropdown && 
+                !monthSelectorBtn.contains(e.target) && 
+                !monthSelectorDropdown.contains(e.target)) {
+                monthSelectorDropdown.style.display = 'none';
+                const arrow = monthSelectorBtn.querySelector('.stc-month-selector-arrow');
+                if (arrow) {
+                    arrow.style.transform = 'rotate(0deg)';
+                }
+            }
+        });
+    }
+    
+    // Apply button handler
+    if (monthSelectorApply && yearSelect && monthSelect) {
+        monthSelectorApply.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const selectedYear = yearSelect.value;
+            const selectedMonth = monthSelect.value;
+            
+            currentSelectedYear = selectedYear;
+            currentSelectedMonth = selectedMonth;
+            
+            // Update text and stats
+            updateSelectorText(selectedYear, selectedMonth);
+            updateMonthlyStats(selectedYear, selectedMonth);
+            
+            // Close dropdown
+            if (monthSelectorDropdown) {
+                monthSelectorDropdown.style.display = 'none';
+                const arrow = monthSelectorBtn.querySelector('.stc-month-selector-arrow');
+                if (arrow) {
+                    arrow.style.transform = 'rotate(0deg)';
+                }
+            }
+        });
+    }
+
 });
