@@ -543,10 +543,9 @@
   font-size: 14px;
 }
 
-.stc-history-head,
-.stc-history-item {
+.stc-history-head {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 55px;
+  grid-template-columns: 1fr 1fr 1fr 1fr 55px;
   align-items: center;
   text-align: center;
 }
@@ -592,6 +591,11 @@
   opacity: 0.9;
 }
 
+.stc-history-hours {
+  font-weight: bold;
+  flex: 1;
+  text-align: center;
+}
 .stc-history-sales {
   font-weight: bold;
   flex: 1;

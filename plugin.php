@@ -288,6 +288,25 @@ if (!function_exists('stc_load_more_deliveries')) {
                 $start_datetime = $formatted_start_date && $start_time ? $formatted_start_date . ' ' . $start_time : '';
                 $end_datetime = $formatted_end_date && $end_time ? $formatted_end_date . ' ' . $end_time : '';
                 
+                // Calculate livestream hours
+                $livestream_hours = 0;
+                $formatted_hours = '0.0';
+                if ($start_time && $end_time && $delivery_date) {
+                    $start_timestamp = strtotime($delivery_date . ' ' . $start_time);
+                    $end_timestamp = strtotime($actual_end_date . ' ' . $end_time);
+                    
+                    // If end time is earlier than start time on the same day, it means it's next day
+                    if ($end_timestamp < $start_timestamp && $actual_end_date === $delivery_date) {
+                        // Add 24 hours if end is before start on same day
+                        $end_timestamp = strtotime($actual_end_date . ' ' . $end_time . ' +1 day');
+                    }
+                    
+                    if ($start_timestamp && $end_timestamp) {
+                        $livestream_hours = ($end_timestamp - $start_timestamp) / 3600;
+                        $formatted_hours = number_format($livestream_hours, 1);
+                    }
+                }
+                
                 $formatted_sales = $total_sales ? '¥' . number_format($total_sales) : '¥0';
                 
                 // Build detail URL
@@ -308,6 +327,7 @@ if (!function_exists('stc_load_more_deliveries')) {
                 $html .= '<div class="stc-history-date">' . esc_html($formatted_end_date) . '</div>';
                 $html .= '<div class="stc-history-time">' . esc_html($end_time) . '</div>';
                 $html .= '</div>';
+                $html .= '<div class="stc-history-hours">' . esc_html($formatted_hours) . 'h</div>';
                 $html .= '<div class="stc-history-sales">' . esc_html($formatted_sales) . '</div>';
                 $html .= '<div class="stc-history-action">';
                 $html .= '<a href="' . esc_url($detail_url) . '" class="stc-detail-button">' . esc_html__('詳細', 'sale-time-checker') . '</a>';

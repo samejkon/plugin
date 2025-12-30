@@ -126,6 +126,7 @@ if (!function_exists('stc_profile_shortcode')) {
                 <div class="stc-history-head">
                     <div class="stc-history-col"><?php echo esc_html__('開始', 'sale-time-checker'); ?></div>
                     <div class="stc-history-col"><?php echo esc_html__('終了', 'sale-time-checker'); ?></div>
+                    <div class="stc-history-col"><?php echo esc_html__('配信時間', 'sale-time-checker'); ?></div>
                     <div class="stc-history-col"><?php echo esc_html__('売上合計', 'sale-time-checker'); ?></div>
                     <div class="stc-history-col"></div>
                 </div>
@@ -186,6 +187,25 @@ if (!function_exists('stc_profile_shortcode')) {
                             $start_datetime = $formatted_start_date && $start_time ? $formatted_start_date . ' ' . $start_time : '';
                             $end_datetime = $formatted_end_date && $end_time ? $formatted_end_date . ' ' . $end_time : '';
                             
+                            // Calculate livestream hours
+                            $livestream_hours = 0;
+                            $formatted_hours = '0.0';
+                            if ($start_time && $end_time && $delivery_date) {
+                                $start_timestamp = strtotime($delivery_date . ' ' . $start_time);
+                                $end_timestamp = strtotime($actual_end_date . ' ' . $end_time);
+                                
+                                // If end time is earlier than start time on the same day, it means it's next day
+                                if ($end_timestamp < $start_timestamp && $actual_end_date === $delivery_date) {
+                                    // Add 24 hours if end is before start on same day
+                                    $end_timestamp = strtotime($actual_end_date . ' ' . $end_time . ' +1 day');
+                                }
+                                
+                                if ($start_timestamp && $end_timestamp) {
+                                    $livestream_hours = ($end_timestamp - $start_timestamp) / 3600;
+                                    $formatted_hours = number_format($livestream_hours, 1);
+                                }
+                            }
+                            
                             $formatted_sales = $total_sales ? '¥' . number_format($total_sales) : '¥0';
                             
                             $detail_url = add_query_arg(array('view' => 'detail', 'id' => $post_id, 'readonly' => '1'), strtok(home_url(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))), '?'));
@@ -200,6 +220,7 @@ if (!function_exists('stc_profile_shortcode')) {
                                     <div class="stc-history-date"><?php echo esc_html($formatted_end_date); ?></div>
                                     <div class="stc-history-time"><?php echo esc_html($end_time); ?></div>
                                 </div>
+                                <div class="stc-history-hours"><?php echo esc_html($formatted_hours); ?>h</div>
                                 <div class="stc-history-sales"><?php echo esc_html($formatted_sales); ?></div>
                                 <div class="stc-history-action">
                                     <a href="<?php echo esc_url($detail_url); ?>" class="stc-detail-button">
