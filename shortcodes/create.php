@@ -42,6 +42,14 @@ if (!function_exists('stc_handle_create_delivery')) {
         $total_sales = isset($_POST['total_sales']) ? intval($_POST['total_sales']) : 0;
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $memo = isset($_POST['memo']) ? sanitize_textarea_field(wp_unslash($_POST['memo'])) : '';
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $stream_brand = isset($_POST['stream_brand']) ? sanitize_text_field(wp_unslash($_POST['stream_brand'])) : '';
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $stream_result = isset($_POST['stream_result']) ? sanitize_text_field(wp_unslash($_POST['stream_result'])) : '';
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $stream_factor = isset($_POST['stream_factor']) ? sanitize_text_field(wp_unslash($_POST['stream_factor'])) : '';
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $stream_reason = isset($_POST['stream_reason']) ? sanitize_textarea_field(wp_unslash($_POST['stream_reason'])) : '';
 
         // Validate
         if (empty($delivery_date)) {
@@ -62,6 +70,22 @@ if (!function_exists('stc_handle_create_delivery')) {
 
         if ($total_sales <= 0) {
             $errors['total_sales'] = esc_html__('売上合計を入力してください。', 'sale-time-checker');
+        }
+
+        if (empty($stream_brand)) {
+            $errors['stream_brand'] = esc_html__('配信したブランドを選択してください。', 'sale-time-checker');
+        }
+
+        if (empty($stream_result)) {
+            $errors['stream_result'] = esc_html__('配信結果を選択してください。', 'sale-time-checker');
+        }
+
+        if (empty($stream_factor)) {
+            $errors['stream_factor'] = esc_html__('影響した要因を選択してください。', 'sale-time-checker');
+        }
+
+        if (empty($stream_reason)) {
+            $errors['stream_reason'] = esc_html__('理由を入力してください。', 'sale-time-checker');
         }
 
         $before_screenshot = '';
@@ -95,6 +119,10 @@ if (!function_exists('stc_handle_create_delivery')) {
             'before_screenshot' => $before_screenshot,
             'after_screenshot' => $after_screenshot,
             'memo' => $memo,
+            'stream_brand' => $stream_brand,
+            'stream_result' => $stream_result,
+            'stream_factor' => $stream_factor,
+            'stream_reason' => $stream_reason,
         );
 
         if (function_exists('get_permalink') && get_the_ID()) {
@@ -229,6 +257,114 @@ if (!function_exists('stc_create_shortcode')) {
                 <?php if (isset($errors['total_sales'])) : ?>
                     <span class="stc-error-message"><?php echo esc_html($errors['total_sales']); ?></span>
                 <?php endif; ?>
+
+                <div class="stc-form-group">
+                    <label class="stc-form-label" for="stc-stream-brand">
+                        <?php echo esc_html__('配信したブランド', 'sale-time-checker'); ?>
+                    </label>
+                    <select 
+                        id="stc-stream-brand"
+                        name="stream_brand"
+                        class="stc-form-select"
+                        required>
+                        <option value=""><?php echo esc_html__('選択してください', 'sale-time-checker'); ?></option>
+                        <option value="1" <?php echo (isset($_POST['stream_brand']) && $_POST['stream_brand'] === '1') || (isset($session_data['stream_brand']) && $session_data['stream_brand'] === '1') ? 'selected' : ''; ?>>
+                            1
+                        </option>
+                        <option value="2" <?php echo (isset($_POST['stream_brand']) && $_POST['stream_brand'] === '2') || (isset($session_data['stream_brand']) && $session_data['stream_brand'] === '2') ? 'selected' : ''; ?>>
+                            2
+                        </option>
+                    </select>
+                    <?php if (isset($errors['stream_brand'])) : ?>
+                        <span class="stc-error-message"><?php echo esc_html($errors['stream_brand']); ?></span>
+                    <?php endif; ?>
+                </div>
+
+                <div class="stc-questions-section">
+                    <label class="stc-form-label">
+                        <?php echo esc_html__('今日の配信結果は？', 'sale-time-checker'); ?>
+                    </label>
+                    <div class="stc-radio-options">
+                        <label class="stc-radio-option">
+                            <input type="radio" name="stream_result" value="success" 
+                                   <?php echo (isset($_POST['stream_result']) && $_POST['stream_result'] === 'success') || (isset($session_data['stream_result']) && $session_data['stream_result'] === 'success') ? 'checked' : ''; ?> 
+                                   required>
+                            <span class="stc-radio-label">⭕ <?php echo esc_html__('成功', 'sale-time-checker'); ?></span>
+                        </label>
+                        <label class="stc-radio-option">
+                            <input type="radio" name="stream_result" value="failure" 
+                                   <?php echo (isset($_POST['stream_result']) && $_POST['stream_result'] === 'failure') || (isset($session_data['stream_result']) && $session_data['stream_result'] === 'failure') ? 'checked' : ''; ?> 
+                                   required>
+                            <span class="stc-radio-label">❌ <?php echo esc_html__('失敗', 'sale-time-checker'); ?></span>
+                        </label>
+                    </div>
+                    <?php if (isset($errors['stream_result'])) : ?>
+                        <span class="stc-error-message"><?php echo esc_html($errors['stream_result']); ?></span>
+                    <?php endif; ?>
+                </div>
+
+                <div class="stc-questions-section">
+                    <label class="stc-form-label">
+                        <?php echo esc_html__('一番影響した要因は？', 'sale-time-checker'); ?>
+                    </label>
+                    <div class="stc-radio-options">
+                        <label class="stc-radio-option">
+                            <input type="radio" name="stream_factor" value="product" 
+                                   <?php echo (isset($_POST['stream_factor']) && $_POST['stream_factor'] === 'product') || (isset($session_data['stream_factor']) && $session_data['stream_factor'] === 'product') ? 'checked' : ''; ?> 
+                                   required>
+                            <span class="stc-radio-label">📦 <?php echo esc_html__('商品', 'sale-time-checker'); ?></span>
+                        </label>
+                        <label class="stc-radio-option">
+                            <input type="radio" name="stream_factor" value="price" 
+                                   <?php echo (isset($_POST['stream_factor']) && $_POST['stream_factor'] === 'price') || (isset($session_data['stream_factor']) && $session_data['stream_factor'] === 'price') ? 'checked' : ''; ?> 
+                                   required>
+                            <span class="stc-radio-label">💰 <?php echo esc_html__('価格', 'sale-time-checker'); ?></span>
+                        </label>
+                        <label class="stc-radio-option">
+                            <input type="radio" name="stream_factor" value="speech" 
+                                   <?php echo (isset($_POST['stream_factor']) && $_POST['stream_factor'] === 'speech') || (isset($session_data['stream_factor']) && $session_data['stream_factor'] === 'speech') ? 'checked' : ''; ?> 
+                                   required>
+                            <span class="stc-radio-label">🗣 <?php echo esc_html__('話し方', 'sale-time-checker'); ?></span>
+                        </label>
+                        <label class="stc-radio-option">
+                            <input type="radio" name="stream_factor" value="structure" 
+                                   <?php echo (isset($_POST['stream_factor']) && $_POST['stream_factor'] === 'structure') || (isset($session_data['stream_factor']) && $session_data['stream_factor'] === 'structure') ? 'checked' : ''; ?> 
+                                   required>
+                            <span class="stc-radio-label">🧩 <?php echo esc_html__('構成', 'sale-time-checker'); ?></span>
+                        </label>
+                        <label class="stc-radio-option">
+                            <input type="radio" name="stream_factor" value="condition" 
+                                   <?php echo (isset($_POST['stream_factor']) && $_POST['stream_factor'] === 'condition') || (isset($session_data['stream_factor']) && $session_data['stream_factor'] === 'condition') ? 'checked' : ''; ?> 
+                                   required>
+                            <span class="stc-radio-label">😐 <?php echo esc_html__('コンディション', 'sale-time-checker'); ?></span>
+                        </label>
+                        <label class="stc-radio-option">
+                            <input type="radio" name="stream_factor" value="impression" 
+                                   <?php echo (isset($_POST['stream_factor']) && $_POST['stream_factor'] === 'impression') || (isset($session_data['stream_factor']) && $session_data['stream_factor'] === 'impression') ? 'checked' : ''; ?> 
+                                   required>
+                            <span class="stc-radio-label">📈 <?php echo esc_html__('インプレッション', 'sale-time-checker'); ?></span>
+                        </label>
+                    </div>
+                    <?php if (isset($errors['stream_factor'])) : ?>
+                        <span class="stc-error-message"><?php echo esc_html($errors['stream_factor']); ?></span>
+                    <?php endif; ?>
+                </div>
+
+                <div class="stc-form-group">
+                    <label class="stc-form-label" for="stc-create-reason">
+                        <?php echo esc_html__('ひとこと理由', 'sale-time-checker'); ?>
+                    </label>
+                    <textarea
+                        id="stc-create-reason"
+                        name="stream_reason"
+                        class="stc-form-textarea"
+                        rows="3"
+                        placeholder="<?php echo esc_attr__('例：価格出すのが遅れた', 'sale-time-checker'); ?>"
+                        required><?php echo isset($_POST['stream_reason']) ? esc_textarea(sanitize_textarea_field(wp_unslash($_POST['stream_reason']))) : (isset($session_data['stream_reason']) ? esc_textarea($session_data['stream_reason']) : ''); ?></textarea>
+                    <?php if (isset($errors['stream_reason'])) : ?>
+                        <span class="stc-error-message"><?php echo esc_html($errors['stream_reason']); ?></span>
+                    <?php endif; ?>
+                </div>
 
                 <div class="stc-form-group">
                     <label class="stc-form-label">

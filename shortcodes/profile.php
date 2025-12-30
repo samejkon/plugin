@@ -161,7 +161,7 @@ if (!function_exists('stc_profile_shortcode')) {
                                 'compare' => '='
                             )
                         ),
-                        'orderby' => 'meta_value_date',
+                        'orderby' => 'meta_value',
                         'meta_key' => 'delivery_date',
                         'order' => 'DESC',
                         'meta_type' => 'DATE'
@@ -220,7 +220,7 @@ if (!function_exists('stc_profile_shortcode')) {
                                     <div class="stc-history-date"><?php echo esc_html($formatted_end_date); ?></div>
                                     <div class="stc-history-time"><?php echo esc_html($end_time); ?></div>
                                 </div>
-                                <div class="stc-history-hours"><?php echo esc_html($formatted_hours); ?>h</div>
+                                <div class="stc-history-hours"><?php echo esc_html($formatted_hours); ?>時間</div>
                                 <div class="stc-history-sales"><?php echo esc_html($formatted_sales); ?></div>
                                 <div class="stc-history-action">
                                     <a href="<?php echo esc_url($detail_url); ?>" class="stc-detail-button">

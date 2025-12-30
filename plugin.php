@@ -248,6 +248,23 @@ if (!function_exists('stc_load_more_deliveries')) {
         
         $offset = ($page - 1) * $per_page;
         
+        // Get total count first (without orderby to ensure accurate count)
+        $count_args = array(
+            'post_type' => 'stc_delivery',
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'meta_query' => array(
+                array(
+                    'key' => 'user_id',
+                    'value' => $user_id,
+                    'compare' => '='
+                )
+            ),
+        );
+        $count_query = new WP_Query($count_args);
+        $total_count = $count_query->found_posts;
+        wp_reset_postdata();
+        
         $args = array(
             'post_type' => 'stc_delivery',
             'posts_per_page' => $per_page,
@@ -259,7 +276,7 @@ if (!function_exists('stc_load_more_deliveries')) {
                     'compare' => '='
                 )
             ),
-            'orderby' => 'meta_value_date',
+            'orderby' => 'meta_value',
             'meta_key' => 'delivery_date',
             'order' => 'DESC',
             'meta_type' => 'DATE'
@@ -327,7 +344,7 @@ if (!function_exists('stc_load_more_deliveries')) {
                 $html .= '<div class="stc-history-date">' . esc_html($formatted_end_date) . '</div>';
                 $html .= '<div class="stc-history-time">' . esc_html($end_time) . '</div>';
                 $html .= '</div>';
-                $html .= '<div class="stc-history-hours">' . esc_html($formatted_hours) . 'h</div>';
+                $html .= '<div class="stc-history-hours">' . esc_html($formatted_hours) . '時間</div>';
                 $html .= '<div class="stc-history-sales">' . esc_html($formatted_sales) . '</div>';
                 $html .= '<div class="stc-history-action">';
                 $html .= '<a href="' . esc_url($detail_url) . '" class="stc-detail-button">' . esc_html__('詳細', 'sale-time-checker') . '</a>';
@@ -345,8 +362,7 @@ if (!function_exists('stc_load_more_deliveries')) {
             }
             wp_reset_postdata();
             
-            // Check if there are more records
-            $total_count = $deliveries->found_posts;
+            // Check if there are more records using accurate total count
             $total_loaded = $offset + $deliveries->post_count;
             $has_more = ($total_loaded < $total_count);
         }

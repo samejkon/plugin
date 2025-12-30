@@ -44,6 +44,14 @@ if (!function_exists('stc_handle_confirm_save')) {
         $after_screenshot = isset($_POST['after_screenshot']) ? sanitize_text_field(wp_unslash($_POST['after_screenshot'])) : '';
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $memo = isset($_POST['memo']) ? sanitize_textarea_field(wp_unslash($_POST['memo'])) : '';
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $stream_brand = isset($_POST['stream_brand']) ? sanitize_text_field(wp_unslash($_POST['stream_brand'])) : '';
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $stream_result = isset($_POST['stream_result']) ? sanitize_text_field(wp_unslash($_POST['stream_result'])) : '';
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $stream_factor = isset($_POST['stream_factor']) ? sanitize_text_field(wp_unslash($_POST['stream_factor'])) : '';
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $stream_reason = isset($_POST['stream_reason']) ? sanitize_textarea_field(wp_unslash($_POST['stream_reason'])) : '';
 
         if ($mode === 'update' && $delivery_id) {
             // Update existing post
@@ -60,6 +68,10 @@ if (!function_exists('stc_handle_confirm_save')) {
             update_post_meta($delivery_id, 'before_screenshot', $before_screenshot);
             update_post_meta($delivery_id, 'after_screenshot', $after_screenshot);
             update_post_meta($delivery_id, 'memo', $memo);
+            update_post_meta($delivery_id, 'stream_brand', $stream_brand);
+            update_post_meta($delivery_id, 'stream_result', $stream_result);
+            update_post_meta($delivery_id, 'stream_factor', $stream_factor);
+            update_post_meta($delivery_id, 'stream_reason', $stream_reason);
             update_post_meta($delivery_id, 'updated_date', current_time('mysql'));
 
             unset($_SESSION['stc_confirm_data']);
@@ -92,6 +104,10 @@ if (!function_exists('stc_handle_confirm_save')) {
                 update_post_meta($new_delivery_id, 'before_screenshot', $before_screenshot);
                 update_post_meta($new_delivery_id, 'after_screenshot', $after_screenshot);
                 update_post_meta($new_delivery_id, 'memo', $memo);
+                update_post_meta($new_delivery_id, 'stream_brand', $stream_brand);
+                update_post_meta($new_delivery_id, 'stream_result', $stream_result);
+                update_post_meta($new_delivery_id, 'stream_factor', $stream_factor);
+                update_post_meta($new_delivery_id, 'stream_reason', $stream_reason);
                 update_post_meta($new_delivery_id, 'created_date', current_time('mysql'));
 
                 unset($_SESSION['stc_confirm_data']);
@@ -132,6 +148,10 @@ if (!function_exists('stc_confirm_shortcode')) {
         $before_screenshot = isset($data['before_screenshot']) ? $data['before_screenshot'] : '';
         $after_screenshot = isset($data['after_screenshot']) ? $data['after_screenshot'] : '';
         $memo = isset($data['memo']) ? $data['memo'] : '';
+        $stream_brand = isset($data['stream_brand']) ? $data['stream_brand'] : '';
+        $stream_result = isset($data['stream_result']) ? $data['stream_result'] : '';
+        $stream_factor = isset($data['stream_factor']) ? $data['stream_factor'] : '';
+        $stream_reason = isset($data['stream_reason']) ? $data['stream_reason'] : '';
 
         if (empty($data)) {
             $redirect_url = add_query_arg('view', 'create');
@@ -186,6 +206,48 @@ if (!function_exists('stc_confirm_shortcode')) {
                     <span class="stc-confirm-value"><?php echo esc_html(number_format($total_sales)); ?></span>
                 </div>
 
+                <?php if (!empty($stream_brand)) : ?>
+                <div class="stc-confirm-row">
+                    <span class="stc-confirm-label"><?php echo esc_html__('配信したブランド', 'sale-time-checker'); ?></span>
+                    <span class="stc-confirm-value"><?php echo esc_html($stream_brand); ?></span>
+                </div>
+                <?php endif; ?>
+
+                <div class="stc-confirm-row">
+                    <span class="stc-confirm-label"><?php echo esc_html__('配信結果', 'sale-time-checker'); ?></span>
+                    <span class="stc-confirm-value">
+                        <?php 
+                        if ($stream_result === 'success') {
+                            echo '<span class="stc-result-badge stc-result-badge--success">⭕ ' . esc_html__('成功', 'sale-time-checker') . '</span>';
+                        } elseif ($stream_result === 'failure') {
+                            echo '<span class="stc-result-badge stc-result-badge--failure">❌ ' . esc_html__('失敗', 'sale-time-checker') . '</span>';
+                        }
+                        ?>
+                    </span>
+                </div>
+
+                <div class="stc-confirm-row">
+                    <span class="stc-confirm-label"><?php echo esc_html__('影響した要因', 'sale-time-checker'); ?></span>
+                    <span class="stc-confirm-value">
+                        <?php
+                        $factor_labels = array(
+                            'product' => '📦 ' . esc_html__('商品', 'sale-time-checker'),
+                            'price' => '💰 ' . esc_html__('価格', 'sale-time-checker'),
+                            'speech' => '🗣 ' . esc_html__('話し方', 'sale-time-checker'),
+                            'structure' => '🧩 ' . esc_html__('構成', 'sale-time-checker'),
+                            'condition' => '😐 ' . esc_html__('コンディション', 'sale-time-checker'),
+                            'impression' => '📈 ' . esc_html__('インプレッション', 'sale-time-checker'),
+                        );
+                        echo isset($factor_labels[$stream_factor]) ? esc_html($factor_labels[$stream_factor]) : esc_html($stream_factor);
+                        ?>
+                    </span>
+                </div>
+
+                <div class="stc-confirm-row">
+                    <span class="stc-confirm-label"><?php echo esc_html__('理由', 'sale-time-checker'); ?></span>
+                    <span class="stc-confirm-value"><?php echo esc_html($stream_reason); ?></span>
+                </div>
+
                 <div class="stc-confirm-row">
                     <span class="stc-confirm-label"><?php echo esc_html__('メモ', 'sale-time-checker'); ?></span>
                     <span class="stc-confirm-value"><?php echo esc_html($memo); ?></span>
@@ -225,6 +287,10 @@ if (!function_exists('stc_confirm_shortcode')) {
                     <input type="hidden" name="before_screenshot" value="<?php echo esc_attr($before_screenshot); ?>">
                     <input type="hidden" name="after_screenshot" value="<?php echo esc_attr($after_screenshot); ?>">
                     <input type="hidden" name="memo" value="<?php echo esc_attr($memo); ?>">
+                    <input type="hidden" name="stream_brand" value="<?php echo esc_attr($stream_brand); ?>">
+                    <input type="hidden" name="stream_result" value="<?php echo esc_attr($stream_result); ?>">
+                    <input type="hidden" name="stream_factor" value="<?php echo esc_attr($stream_factor); ?>">
+                    <input type="hidden" name="stream_reason" value="<?php echo esc_attr($stream_reason); ?>">
                     <button type="submit" name="stc_confirm_save" class="stc-confirm-btn stc-confirm-btn--save">
                         <?php echo esc_html__('記録', 'sale-time-checker'); ?>
                     </button>

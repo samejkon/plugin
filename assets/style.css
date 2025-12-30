@@ -720,7 +720,8 @@
 }
 
 .stc-form-input,
-.stc-form-textarea {
+.stc-form-textarea,
+.stc-form-select {
   width: 100%;
   background: #111;
   border: 1px solid #555;
@@ -731,9 +732,25 @@
 }
 
 .stc-form-input:focus,
-.stc-form-textarea:focus {
+.stc-form-textarea:focus,
+.stc-form-select:focus {
   outline: none;
   border-color: #e60013;
+}
+
+.stc-form-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 40px;
+}
+
+.stc-form-select option {
+  background: #111;
+  color: #fff;
+  padding: 10px;
 }
 
 /* Make date input fully clickable by expanding the calendar icon */
@@ -855,6 +872,7 @@ input[type="date"].stc-form-input::-webkit-calendar-picker-indicator {
 
 .stc-form-textarea {
   border-radius: 12px;
+  min-height: 100px;
   resize: vertical;
 }
 
@@ -1450,4 +1468,69 @@ input[type="date"]::-moz-calendar-picker-indicator {
 .stc-confirm-image:hover,
 .stc-upload-preview__image:hover {
   transform: scale(1.05);
+}
+
+/* Questions Section Styles */
+.stc-questions-section {
+  min-height: 20px;
+  margin-bottom: 20px;
+}
+
+.stc-questions-section .stc-form-label {
+  margin-bottom: 10px;
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.stc-radio-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stc-radio-option {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 10px 12px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.stc-radio-option:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.stc-radio-option input[type="radio"] {
+  margin: 0;
+  margin-right: 12px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #ffc107;
+}
+
+.stc-radio-label {
+  font-size: 14px;
+  color: #fff;
+  cursor: pointer;
+  flex: 1;
+}
+
+.stc-result-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.stc-result-badge--success {
+  color: #fff;
+}
+
+.stc-result-badge--failure {
+  background-color: #f44336;
+  color: #fff;
 }

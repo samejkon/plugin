@@ -50,6 +50,10 @@ if (!function_exists('stc_detail_shortcode')) {
         $before_screenshot = get_post_meta($delivery_id, 'before_screenshot', true);
         $after_screenshot = get_post_meta($delivery_id, 'after_screenshot', true);
         $memo = get_post_meta($delivery_id, 'memo', true);
+        $stream_brand = get_post_meta($delivery_id, 'stream_brand', true);
+        $stream_result = get_post_meta($delivery_id, 'stream_result', true);
+        $stream_factor = get_post_meta($delivery_id, 'stream_factor', true);
+        $stream_reason = get_post_meta($delivery_id, 'stream_reason', true);
 
         if (function_exists('get_permalink') && get_the_ID()) {
             $current_url = get_permalink();
@@ -95,6 +99,54 @@ if (!function_exists('stc_detail_shortcode')) {
                     <span class="stc-confirm-label"><?php echo esc_html__('売上合計', 'sale-time-checker'); ?></span>
                     <span class="stc-confirm-value"><?php echo esc_html(number_format($total_sales)); ?></span>
                 </div>
+
+                <?php if (!empty($stream_brand)) : ?>
+                <div class="stc-confirm-row">
+                    <span class="stc-confirm-label"><?php echo esc_html__('配信したブランド', 'sale-time-checker'); ?></span>
+                    <span class="stc-confirm-value"><?php echo esc_html($stream_brand); ?></span>
+                </div>
+                <?php endif; ?>
+
+                <?php if (!empty($stream_result)) : ?>
+                <div class="stc-confirm-row">
+                    <span class="stc-confirm-label"><?php echo esc_html__('配信結果', 'sale-time-checker'); ?></span>
+                    <span class="stc-confirm-value">
+                        <?php 
+                        if ($stream_result === 'success') {
+                            echo '<span class="stc-result-badge stc-result-badge--success">⭕ ' . esc_html__('成功', 'sale-time-checker') . '</span>';
+                        } elseif ($stream_result === 'failure') {
+                            echo '<span class="stc-result-badge stc-result-badge--failure">❌ ' . esc_html__('失敗', 'sale-time-checker') . '</span>';
+                        }
+                        ?>
+                    </span>
+                </div>
+                <?php endif; ?>
+
+                <?php if (!empty($stream_factor)) : ?>
+                <div class="stc-confirm-row">
+                    <span class="stc-confirm-label"><?php echo esc_html__('影響した要因', 'sale-time-checker'); ?></span>
+                    <span class="stc-confirm-value">
+                        <?php
+                        $factor_labels = array(
+                            'product' => '📦 ' . esc_html__('商品', 'sale-time-checker'),
+                            'price' => '💰 ' . esc_html__('価格', 'sale-time-checker'),
+                            'speech' => '🗣 ' . esc_html__('話し方', 'sale-time-checker'),
+                            'structure' => '🧩 ' . esc_html__('構成', 'sale-time-checker'),
+                            'condition' => '😐 ' . esc_html__('コンディション', 'sale-time-checker'),
+                            'impression' => '📈 ' . esc_html__('インプレッション', 'sale-time-checker'),
+                        );
+                        echo isset($factor_labels[$stream_factor]) ? esc_html($factor_labels[$stream_factor]) : esc_html($stream_factor);
+                        ?>
+                    </span>
+                </div>
+                <?php endif; ?>
+
+                <?php if (!empty($stream_reason)) : ?>
+                <div class="stc-confirm-row">
+                    <span class="stc-confirm-label"><?php echo esc_html__('理由', 'sale-time-checker'); ?></span>
+                    <span class="stc-confirm-value"><?php echo esc_html($stream_reason); ?></span>
+                </div>
+                <?php endif; ?>
 
                 <div class="stc-confirm-row">
                     <span class="stc-confirm-label"><?php echo esc_html__('メモ', 'sale-time-checker'); ?></span>

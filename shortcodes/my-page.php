@@ -495,7 +495,7 @@ if (!function_exists('stc_my_page_shortcode')) {
                         $total_count = $count_query->found_posts;
                         wp_reset_postdata();
                         
-                        // Get first 10 records for display
+                        // Get first 10 records for display - sorted by end_date DESC (newest first)
                         $args = array(
                             'post_type' => 'stc_delivery',
                             'posts_per_page' => 10,
@@ -506,7 +506,7 @@ if (!function_exists('stc_my_page_shortcode')) {
                                     'compare' => '='
                                 )
                             ),
-                            'orderby' => 'meta_value_date',
+                            'orderby' => 'meta_value',
                             'meta_key' => 'delivery_date',
                             'order' => 'DESC',
                             'meta_type' => 'DATE'
