@@ -268,12 +268,28 @@ if (!function_exists('stc_create_shortcode')) {
                         class="stc-form-select"
                         required>
                         <option value=""><?php echo esc_html__('選択してください', 'sale-time-checker'); ?></option>
-                        <option value="1" <?php echo (isset($_POST['stream_brand']) && $_POST['stream_brand'] === '1') || (isset($session_data['stream_brand']) && $session_data['stream_brand'] === '1') ? 'selected' : ''; ?>>
-                            1
+                        <?php
+                        $brands = get_posts([
+                            'post_type' => 'brands',
+                            'numberposts' => -1,
+                            'orderby' => 'ID',
+                            'order' => 'DESC',
+                            'post_status' => 'publish'
+                        ]);
+                        if ($brands) :
+                            foreach ($brands as $brand) :
+                                $brand_id = $brand->ID;
+                                $brand_name = $brand->post_title;
+                                $selected = (isset($_POST['stream_brand']) && $_POST['stream_brand'] == $brand_id) || 
+                                          (isset($session_data['stream_brand']) && $session_data['stream_brand'] == $brand_id);
+                        ?>
+                        <option value="<?php echo esc_attr($brand_id); ?>" <?php echo $selected ? 'selected' : ''; ?>>
+                            <?php echo esc_html($brand_name); ?>
                         </option>
-                        <option value="2" <?php echo (isset($_POST['stream_brand']) && $_POST['stream_brand'] === '2') || (isset($session_data['stream_brand']) && $session_data['stream_brand'] === '2') ? 'selected' : ''; ?>>
-                            2
-                        </option>
+                        <?php
+                            endforeach;
+                        endif;
+                        ?>
                     </select>
                     <?php if (isset($errors['stream_brand'])) : ?>
                         <span class="stc-error-message"><?php echo esc_html($errors['stream_brand']); ?></span>
