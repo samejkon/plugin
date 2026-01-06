@@ -119,8 +119,9 @@ if (!function_exists('stc_profile_shortcode')) {
                     <span class="stc-stat-label"><?php echo esc_html__('累計配信時間', 'sale-time-checker'); ?></span>
                 </div>
             </div>
-
-            <p class="stc-history-title"><?php echo esc_html__('配信履歴', 'sale-time-checker'); ?></p>
+            <div class="stc-history-header">    
+                <p class="stc-history-title"><?php echo esc_html__('配信履歴', 'sale-time-checker'); ?></p>
+            </div>
 
             <div class="stc-history">
                 <div class="stc-history-head">

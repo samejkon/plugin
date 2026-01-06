@@ -531,13 +531,214 @@
   text-decoration: none;
 }
 
+.stc-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0 10px 0;
+  flex-wrap: wrap;
+  gap: 20px;
+  border-bottom: 3px solid #e60013;
+}
+
 .stc-history-title {
   font-size: 1.2em;
   font-weight: bold;
-  margin: 20px 0 10px 0;
-  border-bottom: 3px solid #e60013;
+  margin: 0;
   padding-left: 10px;
+  flex: 1;
+  min-width: 150px;
 }
+
+.stc-history-date-trigger {
+  background-color: #000;
+  border: none;
+  color: #fff;
+  font-weight: 500;
+  font-family: 'Cabin', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+/* Calendar Picker Modal */
+.stc-date-picker-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.stc-date-picker-modal.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.stc-date-picker-modal__backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.stc-date-picker-modal__content {
+  position: relative;
+  z-index: 10000;
+  background: #fafafa;
+  border-radius: 16px;
+  padding: 32px;
+  min-width: 320px;
+  max-width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  transform: scale(0.9) translateY(-20px);
+  transition: transform 0.3s ease;
+}
+
+.stc-date-picker-modal.is-open .stc-date-picker-modal__content {
+  transform: scale(1) translateY(0);
+}
+
+.stc-date-picker-modal__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  z-index: 10001;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.stc-date-picker-modal__close:hover {
+  background-color: #fff;
+  transform: rotate(90deg) scale(1.1);
+}
+
+.stc-date-picker-modal__close svg {
+  width: 18px;
+  height: 18px;
+  stroke: #333;
+}
+
+/* Modern Calendar Picker */
+.stc-history-date-picker {
+  background: transparent;
+  border-radius: 12px;
+  padding: 0;
+  min-width: 300px;
+  box-shadow: none;
+}
+
+.stc-date-picker-year {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.stc-year-nav {
+  background: transparent;
+  border: none;
+  color: #ff8c00;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 6px 12px;
+  transition: all 0.3s;
+  font-weight: bold;
+  line-height: 1;
+  user-select: none;
+}
+
+.stc-year-nav:hover {
+  color: #ff7700;
+  transform: scale(1.15);
+}
+
+.stc-year-nav:active {
+  transform: scale(1);
+  color: #ff6600;
+}
+
+.stc-year-display {
+  font-size: 28px;
+  font-weight: bold;
+  color: #ff8c00;
+  min-width: 90px;
+  text-align: center;
+  user-select: none;
+}
+
+.stc-date-picker-months {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.stc-month-btn {
+  background: transparent;
+  border: 2px solid transparent;
+  color: #ff8c00;
+  padding: 12px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'Cabin', sans-serif;
+  transition: all 0.3s;
+  text-align: center;
+  user-select: none;
+}
+
+.stc-month-btn:hover {
+  background: rgba(255, 140, 0, 0.08);
+  border-color: rgba(255, 140, 0, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(255, 140, 0, 0.15);
+}
+
+.stc-month-btn.active {
+  background: #ff8c00;
+  color: #fff;
+  border-color: #ff8c00;
+  font-weight: bold;
+  box-shadow: 0 3px 8px rgba(255, 140, 0, 0.4);
+  transform: translateY(-1px);
+}
+
+.stc-month-btn:active {
+  transform: translateY(0);
+}
+
+.stc-history-loading {
+  text-align: center;
+  padding: 40px 20px;
+  color: #ccc;
+}
+
+.stc-history-loading p {
+  margin: 0;
+  font-size: 14px;
+}
+
 .stc-history {
   display: grid;
   font-size: 14px;

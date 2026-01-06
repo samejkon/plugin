@@ -123,8 +123,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const perPage = parseInt(button.getAttribute('data-per-page')) || 10;
         const userId = button.getAttribute('data-user-id');
         const type = button.getAttribute('data-type') || 'mypage';
+        const filterYear = button.getAttribute('data-filter-year');
+        const filterMonth = button.getAttribute('data-filter-month');
         const container = button.closest('.stc-view-more-container');
-        const historyBody = document.querySelector('.stc-history-body');
+        const historyBody = document.querySelector('.stc-history-body') || document.getElementById('stc-history-body');
         
         if (!historyBody || !userId) {
             console.error('History body or user ID not found');
@@ -139,18 +141,27 @@ document.addEventListener("DOMContentLoaded", function () {
         // Calculate next page
         const nextPage = currentPage + 1;
         
+        // Prepare AJAX data
+        const ajaxData = {
+            action: 'stc_load_more_deliveries',
+            nonce: stcAjax.nonce,
+            page: nextPage,
+            per_page: perPage,
+            user_id: userId,
+            type: type
+        };
+        
+        // Add filter parameters if available
+        if (filterYear && filterMonth) {
+            ajaxData.filter_year = filterYear;
+            ajaxData.filter_month = filterMonth;
+        }
+        
         // AJAX request
         jQuery.ajax({
             url: stcAjax.ajax_url,
             type: 'POST',
-            data: {
-                action: 'stc_load_more_deliveries',
-                nonce: stcAjax.nonce,
-                page: nextPage,
-                per_page: perPage,
-                user_id: userId,
-                type: type
-            },
+            data: ajaxData,
             success: function(response) {
                 if (response.success && response.data && response.data.html) {
                     // Append new items
@@ -541,6 +552,261 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
         });
+    }
+
+    // History month/year filter handler - modern calendar picker modal
+    const historyYearSelect = document.getElementById('stc-history-year-select');
+    const historyMonthSelect = document.getElementById('stc-history-month-select');
+    const historyBody = document.getElementById('stc-history-body');
+    const dateTriggerBtn = document.getElementById('stc-history-date-trigger');
+    const datePickerModal = document.getElementById('stc-date-picker-modal');
+    const datePickerClose = document.getElementById('stc-date-picker-close');
+    const datePickerBackdrop = datePickerModal ? datePickerModal.querySelector('.stc-date-picker-modal__backdrop') : null;
+    const yearDisplay = document.getElementById('stc-year-display');
+    const monthGrid = document.getElementById('stc-month-grid');
+    const yearPrevBtn = document.querySelector('.stc-year-prev');
+    const yearNextBtn = document.querySelector('.stc-year-next');
+    const monthButtons = document.querySelectorAll('.stc-month-btn');
+    
+    // Modal open/close functions with body scroll lock
+    let scrollPosition = 0;
+    
+    function openDatePickerModal() {
+        if (datePickerModal) {
+            // Save current scroll position
+            scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // Lock body scroll
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.top = '-' + scrollPosition + 'px';
+            document.body.style.width = '100%';
+            
+            datePickerModal.classList.add('is-open');
+        }
+    }
+    
+    function closeDatePickerModal() {
+        if (datePickerModal) {
+            datePickerModal.classList.remove('is-open');
+            
+            // Unlock body scroll
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.width = '';
+            
+            // Restore scroll position
+            window.scrollTo(0, scrollPosition);
+        }
+    }
+    
+    // Open modal when clicking trigger button
+    if (dateTriggerBtn) {
+        dateTriggerBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openDatePickerModal();
+        });
+    }
+    
+    // Close modal when clicking close button
+    if (datePickerClose) {
+        datePickerClose.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            closeDatePickerModal();
+        });
+    }
+    
+    // Close modal when clicking backdrop
+    if (datePickerBackdrop) {
+        datePickerBackdrop.addEventListener('click', function() {
+            closeDatePickerModal();
+        });
+    }
+    
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && datePickerModal && datePickerModal.classList.contains('is-open')) {
+            closeDatePickerModal();
+        }
+    });
+    
+    function reloadHistoryData(year, month) {
+        if (!historyBody || typeof stcAjax === 'undefined' || typeof jQuery === 'undefined') {
+            // If no AJAX available, reload page with URL parameters
+            const url = new URL(window.location.href);
+            url.searchParams.set('history_year', year);
+            url.searchParams.set('history_month', month);
+            window.location.href = url.toString();
+            return;
+        }
+        
+        // Show loading state
+        historyBody.innerHTML = '<div class="stc-history-loading"><p>読み込み中...</p></div>';
+        
+        // Get user ID from view more button if available
+        const viewMoreBtn = document.querySelector('.stc-view-more-btn');
+        const userId = viewMoreBtn ? viewMoreBtn.getAttribute('data-user-id') : null;
+        
+        if (!userId) {
+            // If no button, reload page with new parameters
+            const url = new URL(window.location.href);
+            url.searchParams.set('history_year', year);
+            url.searchParams.set('history_month', month);
+            window.location.href = url.toString();
+            return;
+        }
+        
+        // AJAX request to reload history
+        jQuery.ajax({
+            url: stcAjax.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'stc_load_more_deliveries',
+                nonce: stcAjax.nonce,
+                page: 1,
+                per_page: 10,
+                user_id: userId,
+                type: 'mypage',
+                filter_year: year,
+                filter_month: month
+            },
+            success: function(response) {
+                if (response.success && response.data && response.data.html) {
+                    historyBody.innerHTML = response.data.html;
+                    
+                    // Update view more button
+                    const viewMoreContainer = document.querySelector('.stc-view-more-container');
+                    if (viewMoreContainer) {
+                        if (response.data.has_more) {
+                            const viewMoreBtn = viewMoreContainer.querySelector('.stc-view-more-btn');
+                            if (viewMoreBtn) {
+                                viewMoreBtn.setAttribute('data-page', '1');
+                                viewMoreBtn.setAttribute('data-filter-year', year);
+                                viewMoreBtn.setAttribute('data-filter-month', month);
+                                viewMoreContainer.style.display = 'block';
+                            }
+                        } else {
+                            viewMoreContainer.style.display = 'none';
+                        }
+                    }
+                    
+                    // Re-attach delete form listeners
+                    attachDeleteFormListeners();
+                } else {
+                    historyBody.innerHTML = '<div class="stc-history-empty"><p>配信履歴がありません。</p></div>';
+                    const viewMoreContainer = document.querySelector('.stc-view-more-container');
+                    if (viewMoreContainer) {
+                        viewMoreContainer.style.display = 'none';
+                    }
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', status, error);
+                historyBody.innerHTML = '<div class="stc-history-empty"><p>エラーが発生しました。</p></div>';
+            }
+        });
+    }
+    
+    function updateYearDisplay(year) {
+        if (yearDisplay) {
+            yearDisplay.textContent = year;
+        }
+        if (historyYearSelect) {
+            historyYearSelect.value = year;
+        }
+        // Update all month buttons with new year
+        if (monthButtons) {
+            monthButtons.forEach(function(btn) {
+                btn.setAttribute('data-year', year);
+            });
+        }
+    }
+    
+    function updateMonthSelection(month) {
+        if (historyMonthSelect) {
+            historyMonthSelect.value = month;
+        }
+        // Update active state on month buttons
+        if (monthButtons) {
+            monthButtons.forEach(function(btn) {
+                if (parseInt(btn.getAttribute('data-month')) === parseInt(month)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+    }
+    
+    function updateTriggerButton(year, month) {
+        if (dateTriggerBtn) {
+            const dateText = dateTriggerBtn.querySelector('.stc-date-text');
+            if (dateText) {
+                dateText.textContent = year + '年' + month + '月';
+            } else {
+                // Fallback if structure changed
+                dateTriggerBtn.innerHTML = year + '年' + month + '月' + '▼';
+            }
+        }
+    }
+    
+    // Handle year navigation - only update UI, don't reload data
+    if (yearPrevBtn && yearNextBtn && yearDisplay) {
+        yearPrevBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const currentYear = parseInt(yearDisplay.textContent) || new Date().getFullYear();
+            const newYear = currentYear - 1;
+            updateYearDisplay(newYear);
+            // Don't reload data here, only when month is selected
+        });
+        
+        yearNextBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const currentYear = parseInt(yearDisplay.textContent) || new Date().getFullYear();
+            const newYear = currentYear + 1;
+            updateYearDisplay(newYear);
+            // Don't reload data here, only when month is selected
+        });
+    }
+    
+    // Handle month button clicks - reload data only when month is selected
+    if (monthButtons && monthButtons.length > 0) {
+        monthButtons.forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const month = this.getAttribute('data-month');
+                const year = this.getAttribute('data-year') || (yearDisplay ? yearDisplay.textContent : new Date().getFullYear());
+                
+                updateMonthSelection(month);
+                updateTriggerButton(year, month);
+                
+                // Close modal first
+                closeDatePickerModal();
+                
+                // Then reload data
+                reloadHistoryData(year, month);
+            });
+        });
+    }
+    
+    // Fallback for hidden inputs (if they exist)
+    if (historyYearSelect && historyMonthSelect && historyYearSelect.tagName === 'SELECT' && historyMonthSelect.tagName === 'SELECT') {
+        let reloadTimeout;
+        const handleHistoryFilterChange = function() {
+            const selectedYear = historyYearSelect.value;
+            const selectedMonth = historyMonthSelect.value;
+            
+            // Debounce to avoid too many requests
+            clearTimeout(reloadTimeout);
+            reloadTimeout = setTimeout(function() {
+                reloadHistoryData(selectedYear, selectedMonth);
+            }, 300);
+        };
+        
+        historyYearSelect.addEventListener('change', handleHistoryFilterChange);
+        historyMonthSelect.addEventListener('change', handleHistoryFilterChange);
     }
 
 });
