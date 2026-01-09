@@ -129,6 +129,12 @@ if (!function_exists('stc_handle_update_delivery')) {
             return $errors;
         }
 
+        // Preserve history context (month/year) so confirm + redirect can return to same month.
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        $history_year = isset($_POST['history_year']) ? intval($_POST['history_year']) : (isset($_GET['history_year']) ? intval($_GET['history_year']) : 0);
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        $history_month = isset($_POST['history_month']) ? intval($_POST['history_month']) : (isset($_GET['history_month']) ? intval($_GET['history_month']) : 0);
+
         $_SESSION['stc_confirm_data'] = array(
             'mode' => 'update',
             'delivery_id' => $delivery_id,
@@ -144,6 +150,8 @@ if (!function_exists('stc_handle_update_delivery')) {
             'stream_result' => $stream_result,
             'stream_factor' => $stream_factor,
             'stream_reason' => $stream_reason,
+            'history_year' => $history_year,
+            'history_month' => $history_month,
         );
 
         if (function_exists('get_permalink') && get_the_ID()) {
@@ -153,7 +161,12 @@ if (!function_exists('stc_handle_update_delivery')) {
         } else {
             $base_url = home_url('/');
         }
-        $confirm_url = add_query_arg('view', 'confirm', $base_url);
+        $confirm_args = array('view' => 'confirm');
+        if ($history_year > 0 && $history_month > 0) {
+            $confirm_args['history_year'] = $history_year;
+            $confirm_args['history_month'] = $history_month;
+        }
+        $confirm_url = add_query_arg($confirm_args, $base_url);
         wp_safe_redirect($confirm_url);
         exit;
     }
@@ -232,7 +245,17 @@ if (!function_exists('stc_update_shortcode')) {
         } else {
             $current_url = home_url('/');
         }
-        $detail_url = add_query_arg(array('view' => 'detail', 'id' => $delivery_id), $current_url);
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $history_year = isset($_GET['history_year']) ? intval($_GET['history_year']) : 0;
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $history_month = isset($_GET['history_month']) ? intval($_GET['history_month']) : 0;
+
+        $detail_args = array('view' => 'detail', 'id' => $delivery_id);
+        if ($history_year > 0 && $history_month > 0) {
+            $detail_args['history_year'] = $history_year;
+            $detail_args['history_month'] = $history_month;
+        }
+        $detail_url = add_query_arg($detail_args, $current_url);
 
     ob_start();
 ?>
@@ -250,6 +273,8 @@ if (!function_exists('stc_update_shortcode')) {
             <form class="stc-record-form" method="post" enctype="multipart/form-data">
                 <?php wp_nonce_field('stc_update_action', 'stc_update_nonce'); ?>
                 <input type="hidden" name="delivery_id" value="<?php echo esc_attr($delivery_id); ?>">
+                <input type="hidden" name="history_year" value="<?php echo esc_attr($history_year); ?>">
+                <input type="hidden" name="history_month" value="<?php echo esc_attr($history_month); ?>">
                 <input type="hidden" name="current_before_screenshot" value="<?php echo esc_attr($before_screenshot); ?>">
                 <input type="hidden" name="current_after_screenshot" value="<?php echo esc_attr($after_screenshot); ?>">
                 <input type="hidden" name="remove_before_screenshot" id="remove-before-screenshot" value="">

@@ -98,6 +98,12 @@ if (!function_exists('stc_handle_delete_delivery')) {
         // Delete the delivery
         wp_delete_post($delivery_id, true);
 
+        // Preserve selected history month/year if provided
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        $history_year = isset($_POST['history_year']) ? intval($_POST['history_year']) : (isset($_GET['history_year']) ? intval($_GET['history_year']) : 0);
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        $history_month = isset($_POST['history_month']) ? intval($_POST['history_month']) : (isset($_GET['history_month']) ? intval($_GET['history_month']) : 0);
+
         if (function_exists('get_permalink') && get_the_ID()) {
             $base_url = get_permalink();
         } elseif (isset($_SERVER['REQUEST_URI'])) {
@@ -105,7 +111,12 @@ if (!function_exists('stc_handle_delete_delivery')) {
         } else {
             $base_url = home_url('/');
         }
-        $redirect_url = add_query_arg('view', 'mypage', $base_url);
+        $redirect_args = array('view' => 'mypage');
+        if ($history_year > 0 && $history_month > 0) {
+            $redirect_args['history_year'] = $history_year;
+            $redirect_args['history_month'] = $history_month;
+        }
+        $redirect_url = add_query_arg($redirect_args, $base_url);
         wp_safe_redirect($redirect_url);
         exit;
     }
@@ -698,7 +709,12 @@ if (!function_exists('stc_my_page_shortcode')) {
                                 
                                 $formatted_sales = $total_sales ? '¥' . number_format($total_sales) : '¥0';
                                 
-                                $detail_url = add_query_arg(array('view' => 'detail', 'id' => $post_id));
+                                $detail_url = add_query_arg(array(
+                                    'view' => 'detail',
+                                    'id' => $post_id,
+                                    'history_year' => $history_selected_year,
+                                    'history_month' => $history_selected_month,
+                                ));
                                 ?>
                                 <div class="stc-history-item">
                                     <div class="stc-history-start">
@@ -720,6 +736,8 @@ if (!function_exists('stc_my_page_shortcode')) {
                                             <?php wp_nonce_field('stc_delete_delivery', 'stc_delete_nonce'); ?>
                                             <input type="hidden" name="stc_delete_delivery" value="1">
                                             <input type="hidden" name="delivery_id" value="<?php echo esc_attr($post_id); ?>">
+                                            <input type="hidden" name="history_year" value="<?php echo esc_attr($history_selected_year); ?>">
+                                            <input type="hidden" name="history_month" value="<?php echo esc_attr($history_selected_month); ?>">
                                             <button type="submit" 
                                                     class="stc-delete-button" 
                                                     title="<?php echo esc_attr__('削除', 'sale-time-checker'); ?>">

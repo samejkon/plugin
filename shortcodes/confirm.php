@@ -54,6 +54,12 @@ if (!function_exists('stc_handle_confirm_save')) {
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $stream_reason = isset($_POST['stream_reason']) ? sanitize_textarea_field(wp_unslash($_POST['stream_reason'])) : '';
 
+        // Preserve history context (month/year) so redirect can return to the same selected month.
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $history_year = isset($_POST['history_year']) ? intval(wp_unslash($_POST['history_year'])) : 0;
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $history_month = isset($_POST['history_month']) ? intval(wp_unslash($_POST['history_month'])) : 0;
+
         if ($mode === 'update' && $delivery_id) {
             // Update existing post
             wp_update_post([
@@ -84,7 +90,12 @@ if (!function_exists('stc_handle_confirm_save')) {
             } else {
                 $base_url = home_url('/');
             }
-            $redirect_url = add_query_arg('view', 'mypage', $base_url);
+            $redirect_args = array('view' => 'mypage');
+            if ($history_year > 0 && $history_month > 0) {
+                $redirect_args['history_year'] = $history_year;
+                $redirect_args['history_month'] = $history_month;
+            }
+            $redirect_url = add_query_arg($redirect_args, $base_url);
             wp_safe_redirect($redirect_url);
             exit;
         } else {
@@ -120,7 +131,12 @@ if (!function_exists('stc_handle_confirm_save')) {
                 } else {
                     $base_url = home_url('/');
                 }
-                $redirect_url = add_query_arg('view', 'mypage', $base_url);
+                $redirect_args = array('view' => 'mypage');
+                if ($history_year > 0 && $history_month > 0) {
+                    $redirect_args['history_year'] = $history_year;
+                    $redirect_args['history_month'] = $history_month;
+                }
+                $redirect_url = add_query_arg($redirect_args, $base_url);
                 wp_safe_redirect($redirect_url);
                 exit;
             }
@@ -164,6 +180,8 @@ if (!function_exists('stc_confirm_shortcode')) {
         $stream_result = isset($data['stream_result']) ? $data['stream_result'] : '';
         $stream_factor = isset($data['stream_factor']) ? $data['stream_factor'] : '';
         $stream_reason = isset($data['stream_reason']) ? $data['stream_reason'] : '';
+        $history_year = isset($data['history_year']) ? intval($data['history_year']) : 0;
+        $history_month = isset($data['history_month']) ? intval($data['history_month']) : 0;
 
         if (empty($data)) {
             $redirect_url = add_query_arg('view', 'create');
@@ -180,7 +198,12 @@ if (!function_exists('stc_confirm_shortcode')) {
         }
         
         if ($mode === 'update' && $delivery_id) {
-            $edit_url = add_query_arg(array('view' => 'update', 'id' => $delivery_id), $current_url);
+            $edit_args = array('view' => 'update', 'id' => $delivery_id);
+            if ($history_year > 0 && $history_month > 0) {
+                $edit_args['history_year'] = $history_year;
+                $edit_args['history_month'] = $history_month;
+            }
+            $edit_url = add_query_arg($edit_args, $current_url);
         } else {
             $edit_url = add_query_arg('view', 'create', $current_url);
         }
@@ -288,6 +311,8 @@ if (!function_exists('stc_confirm_shortcode')) {
                 <form method="post">
                     <?php wp_nonce_field('stc_confirm_action', 'stc_confirm_nonce'); ?>
                     <input type="hidden" name="mode" value="<?php echo esc_attr($mode); ?>">
+                    <input type="hidden" name="history_year" value="<?php echo esc_attr($history_year); ?>">
+                    <input type="hidden" name="history_month" value="<?php echo esc_attr($history_month); ?>">
                     <?php if ($mode === 'update' && $delivery_id) : ?>
                         <input type="hidden" name="delivery_id" value="<?php echo esc_attr($delivery_id); ?>">
                     <?php endif; ?>

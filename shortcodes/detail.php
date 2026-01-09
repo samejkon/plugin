@@ -31,6 +31,12 @@ if (!function_exists('stc_detail_shortcode')) {
         // Check if this is read-only mode (viewing other user's profile)
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $is_readonly = isset($_GET['readonly']) && $_GET['readonly'] == '1';
+
+        // Preserve selected month/year context when navigating back to mypage
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $history_year = isset($_GET['history_year']) ? intval($_GET['history_year']) : 0;
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $history_month = isset($_GET['history_month']) ? intval($_GET['history_month']) : 0;
         
         $current_user = stc_get_current_user();
         $post_user_id = get_post_meta($delivery_id, 'user_id', true);
@@ -74,14 +80,44 @@ if (!function_exists('stc_detail_shortcode')) {
             $current_url = home_url('/');
         }
         
-        // If readonly, back to profile page; otherwise back to mypage
-        if ($is_readonly) {
-            $back_url = add_query_arg(array('view' => 'profile', 'user_id' => $post_user_id), strtok($current_url, '?'));
-        } else {
-            $back_url = add_query_arg('view', 'mypage', $current_url);
+        // Prefer browser referer for "戻る" button to truly return to previous page (keeps selected month context).
+        $back_url = '';
+        if (function_exists('wp_get_referer')) {
+            $referer = wp_get_referer();
+            if ($referer) {
+                $home_host = function_exists('wp_parse_url') ? wp_parse_url(home_url(), PHP_URL_HOST) : '';
+                $ref_host = function_exists('wp_parse_url') ? wp_parse_url($referer, PHP_URL_HOST) : '';
+                if (!$home_host || !$ref_host || $home_host === $ref_host) {
+                    $back_url = $referer;
+                }
+            }
+        }
+
+        // Fallback: If readonly, back to profile page; otherwise back to mypage
+        if (empty($back_url)) {
+            if ($is_readonly) {
+                $back_args = array('view' => 'profile', 'user_id' => $post_user_id);
+                if ($history_year > 0 && $history_month > 0) {
+                    $back_args['history_year'] = $history_year;
+                    $back_args['history_month'] = $history_month;
+                }
+                $back_url = add_query_arg($back_args, strtok($current_url, '?'));
+            } else {
+                $back_args = array('view' => 'mypage');
+                if ($history_year > 0 && $history_month > 0) {
+                    $back_args['history_year'] = $history_year;
+                    $back_args['history_month'] = $history_month;
+                }
+                $back_url = add_query_arg($back_args, strtok($current_url, '?'));
+            }
         }
         
-        $update_url = add_query_arg(array('view' => 'update', 'id' => $delivery_id), $current_url);
+        $update_args = array('view' => 'update', 'id' => $delivery_id);
+        if ($history_year > 0 && $history_month > 0) {
+            $update_args['history_year'] = $history_year;
+            $update_args['history_month'] = $history_month;
+        }
+        $update_url = add_query_arg($update_args, strtok($current_url, '?'));
 
     ob_start();
 ?>
