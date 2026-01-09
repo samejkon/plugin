@@ -50,8 +50,9 @@ if (!function_exists('stc_handle_update_delivery')) {
         $total_sales = isset($_POST['total_sales']) ? intval($_POST['total_sales']) : 0;
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $memo = isset($_POST['memo']) ? sanitize_textarea_field(wp_unslash($_POST['memo'])) : '';
+        // stream_brand is expected to be the Brand post ID (CPT: brands)
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-        $stream_brand = isset($_POST['stream_brand']) ? sanitize_text_field(wp_unslash($_POST['stream_brand'])) : '';
+        $stream_brand = isset($_POST['stream_brand']) ? (string) absint(wp_unslash($_POST['stream_brand'])) : '';
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $stream_result = isset($_POST['stream_result']) ? sanitize_text_field(wp_unslash($_POST['stream_result'])) : '';
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
@@ -349,11 +350,9 @@ if (!function_exists('stc_update_shortcode')) {
                         required>
                         <option value=""><?php echo esc_html__('選択してください', 'sale-time-checker'); ?></option>
                         <?php
-                        // Prefer posted value (when validation fails), otherwise use value loaded from session/DB.
-                        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
                         $selected_stream_brand = isset($_POST['stream_brand'])
-                            ? sanitize_text_field(wp_unslash($_POST['stream_brand']))
-                            : $stream_brand;
+                            ? (string) absint(wp_unslash($_POST['stream_brand']))
+                            : (string) $stream_brand;
 
                         $brands = get_posts([
                             'post_type' => 'brands',

@@ -42,8 +42,9 @@ if (!function_exists('stc_handle_create_delivery')) {
         $total_sales = isset($_POST['total_sales']) ? intval($_POST['total_sales']) : 0;
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $memo = isset($_POST['memo']) ? sanitize_textarea_field(wp_unslash($_POST['memo'])) : '';
+        // stream_brand is expected to be the Brand post ID (CPT: brands)
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-        $stream_brand = isset($_POST['stream_brand']) ? sanitize_text_field(wp_unslash($_POST['stream_brand'])) : '';
+        $stream_brand = isset($_POST['stream_brand']) ? (string) absint(wp_unslash($_POST['stream_brand'])) : '';
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $stream_result = isset($_POST['stream_result']) ? sanitize_text_field(wp_unslash($_POST['stream_result'])) : '';
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
@@ -269,6 +270,12 @@ if (!function_exists('stc_create_shortcode')) {
                         required>
                         <option value=""><?php echo esc_html__('選択してください', 'sale-time-checker'); ?></option>
                         <?php
+                        // Prefer posted value (when validation fails), otherwise use value loaded from session.
+                        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+                        $selected_stream_brand = isset($_POST['stream_brand'])
+                            ? (string) absint(wp_unslash($_POST['stream_brand']))
+                            : (isset($session_data['stream_brand']) ? (string) $session_data['stream_brand'] : '');
+
                         $brands = get_posts([
                             'post_type' => 'brands',
                             'numberposts' => -1,
@@ -280,8 +287,7 @@ if (!function_exists('stc_create_shortcode')) {
                             foreach ($brands as $brand) :
                                 $brand_id = $brand->ID;
                                 $brand_name = $brand->post_title;
-                                $selected = (isset($_POST['stream_brand']) && $_POST['stream_brand'] == $brand_id) || 
-                                          (isset($session_data['stream_brand']) && $session_data['stream_brand'] == $brand_id);
+                                $selected = ((string) $selected_stream_brand === (string) $brand_id);
                         ?>
                         <option value="<?php echo esc_attr($brand_id); ?>" <?php echo $selected ? 'selected' : ''; ?>>
                             <?php echo esc_html($brand_name); ?>

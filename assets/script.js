@@ -755,6 +755,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 dateTriggerBtn.innerHTML = year + '年' + month + '月' + '▼';
             }
         }
+
+        // Also update the selected-month title (選択月実績)
+        const selectedMonthTitleDate = document.getElementById('stc-selected-month-title-date');
+        if (selectedMonthTitleDate) {
+            selectedMonthTitleDate.textContent = '（' + year + '年' + month + '月）';
+        }
     }
     
     // Handle year navigation - only update UI, don't reload data

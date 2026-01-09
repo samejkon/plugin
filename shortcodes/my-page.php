@@ -501,7 +501,12 @@ if (!function_exists('stc_my_page_shortcode')) {
                 </div>
             </div>
             
-            <p class="stc-monthly-stats-title"><?php echo esc_html__('選択月実績', 'sale-time-checker'); ?></p>
+            <p class="stc-monthly-stats-title">
+                <?php echo esc_html__('選択月実績', 'sale-time-checker'); ?>
+                <span class="stc-monthly-stats-title-date" id="stc-selected-month-title-date">
+                    <?php echo esc_html('（' . $history_selected_year . '年' . $history_selected_month . '月）'); ?>
+                </span>
+            </p>
             
             <div class="stc-stats-grid" id="stc-selected-month-stats">
                 <div class="stc-stat-item">
