@@ -454,15 +454,17 @@ document.addEventListener("DOMContentLoaded", function () {
     const monthSelect = document.getElementById('stc-month-select');
     const monthSelectorText = document.getElementById('stc-month-selector-text');
     const monthSelectorApply = document.getElementById('stc-month-selector-apply');
-    const selectedMonthSales = document.getElementById('stc-selected-month-sales');
-    const selectedMonthHours = document.getElementById('stc-selected-month-hours');
+    const benchmarkMonthSalesEl = document.getElementById('stc-benchmark-month-sales');
+    const benchmarkMonthHoursEl = document.getElementById('stc-benchmark-month-hours');
+    const selectedMonthSalesEl = document.getElementById('stc-selected-month-sales');
+    const selectedMonthHoursEl = document.getElementById('stc-selected-month-hours');
     const monthlyStatsData = document.getElementById('stc-monthly-stats-data');
     
     let currentSelectedYear = yearSelect ? yearSelect.value : '';
     let currentSelectedMonth = monthSelect ? monthSelect.value : '';
     
-    function updateMonthlyStats(year, month) {
-        if (!selectedMonthSales || !selectedMonthHours) {
+    function updateMonthlyStats(year, month, salesEl, hoursEl) {
+        if (!salesEl || !hoursEl) {
             return;
         }
         
@@ -486,10 +488,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         
         // Format and update sales
-        selectedMonthSales.textContent = '¥' + Math.floor(sales).toLocaleString('ja-JP');
+        salesEl.textContent = '¥' + Math.floor(sales).toLocaleString('ja-JP');
         
         // Format and update hours
-        selectedMonthHours.textContent = hours.toLocaleString('ja-JP', {
+        hoursEl.textContent = hours.toLocaleString('ja-JP', {
             minimumFractionDigits: 1,
             maximumFractionDigits: 1
         });
@@ -539,9 +541,9 @@ document.addEventListener("DOMContentLoaded", function () {
             currentSelectedYear = selectedYear;
             currentSelectedMonth = selectedMonth;
             
-            // Update text and stats
+            // Update text and benchmark stats
             updateSelectorText(selectedYear, selectedMonth);
-            updateMonthlyStats(selectedYear, selectedMonth);
+            updateMonthlyStats(selectedYear, selectedMonth, benchmarkMonthSalesEl, benchmarkMonthHoursEl);
             
             // Close dropdown
             if (monthSelectorDropdown) {
@@ -633,6 +635,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     
     function reloadHistoryData(year, month) {
+        // Update "selected month" stats (history date picker)
+        updateMonthlyStats(year, month, selectedMonthSalesEl, selectedMonthHoursEl);
+        
         if (!historyBody || typeof stcAjax === 'undefined' || typeof jQuery === 'undefined') {
             // If no AJAX available, reload page with URL parameters
             const url = new URL(window.location.href);

@@ -44,8 +44,9 @@ if (!function_exists('stc_handle_confirm_save')) {
         $after_screenshot = isset($_POST['after_screenshot']) ? sanitize_text_field(wp_unslash($_POST['after_screenshot'])) : '';
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $memo = isset($_POST['memo']) ? sanitize_textarea_field(wp_unslash($_POST['memo'])) : '';
+        // stream_brand is expected to be the Brand post ID (CPT: brands)
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-        $stream_brand = isset($_POST['stream_brand']) ? sanitize_text_field(wp_unslash($_POST['stream_brand'])) : '';
+        $stream_brand = isset($_POST['stream_brand']) ? (string) absint(wp_unslash($_POST['stream_brand'])) : '';
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $stream_result = isset($_POST['stream_result']) ? sanitize_text_field(wp_unslash($_POST['stream_result'])) : '';
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
@@ -148,7 +149,18 @@ if (!function_exists('stc_confirm_shortcode')) {
         $before_screenshot = isset($data['before_screenshot']) ? $data['before_screenshot'] : '';
         $after_screenshot = isset($data['after_screenshot']) ? $data['after_screenshot'] : '';
         $memo = isset($data['memo']) ? $data['memo'] : '';
-        $stream_brand = isset($data['stream_brand']) ? $data['stream_brand'] : '';
+        $stream_brand_id = isset($data['stream_brand']) ? $data['stream_brand'] : '';
+        // Get brand name from brand ID
+        $stream_brand = '';
+        if (!empty($stream_brand_id)) {
+            $brand_post = get_post($stream_brand_id);
+            if ($brand_post && $brand_post->post_type === 'brands') {
+                $stream_brand = $brand_post->post_title;
+            } else {
+                // Fallback to ID if brand not found
+                $stream_brand = $stream_brand_id;
+            }
+        }
         $stream_result = isset($data['stream_result']) ? $data['stream_result'] : '';
         $stream_factor = isset($data['stream_factor']) ? $data['stream_factor'] : '';
         $stream_reason = isset($data['stream_reason']) ? $data['stream_reason'] : '';
@@ -287,7 +299,7 @@ if (!function_exists('stc_confirm_shortcode')) {
                     <input type="hidden" name="before_screenshot" value="<?php echo esc_attr($before_screenshot); ?>">
                     <input type="hidden" name="after_screenshot" value="<?php echo esc_attr($after_screenshot); ?>">
                     <input type="hidden" name="memo" value="<?php echo esc_attr($memo); ?>">
-                    <input type="hidden" name="stream_brand" value="<?php echo esc_attr($stream_brand); ?>">
+                    <input type="hidden" name="stream_brand" value="<?php echo esc_attr($stream_brand_id); ?>">
                     <input type="hidden" name="stream_result" value="<?php echo esc_attr($stream_result); ?>">
                     <input type="hidden" name="stream_factor" value="<?php echo esc_attr($stream_factor); ?>">
                     <input type="hidden" name="stream_reason" value="<?php echo esc_attr($stream_reason); ?>">

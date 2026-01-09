@@ -310,12 +310,6 @@ if (!function_exists('stc_my_page_shortcode')) {
                 wp_reset_postdata();
             }
         }
-
-        $previous_month_sales_formatted = number_format($previous_month_sales);
-        $previous_month_hours_formatted = number_format($previous_month_hours, 1);
-        $current_month_sales_formatted = number_format($current_month_sales);
-        $current_month_hours_formatted = number_format($current_month_hours, 1);
-        $total_hours_formatted = number_format($total_hours, 1);
         
         // Sort years and months
         rsort($years_list);
@@ -384,6 +378,23 @@ if (!function_exists('stc_my_page_shortcode')) {
         
         // Sort years descending
         rsort($history_available_years);
+
+        // Calculate stats for selected month (based on history date picker)
+        $history_selected_month_key = sprintf('%04d-%02d', $history_selected_year, $history_selected_month);
+        $selected_month_sales = 0;
+        $selected_month_hours = 0;
+        
+        if (isset($monthly_stats[$history_selected_month_key])) {
+            $selected_month_sales = $monthly_stats[$history_selected_month_key]['sales'];
+            $selected_month_hours = $monthly_stats[$history_selected_month_key]['hours'];
+        }
+        
+        $selected_month_sales_formatted = number_format($selected_month_sales);
+        $selected_month_hours_formatted = number_format($selected_month_hours, 1);
+
+        // Benchmark month stats (default is previous month, controlled by month selector dropdown)
+        $benchmark_month_sales_formatted = number_format($previous_month_sales);
+        $benchmark_month_hours_formatted = number_format($previous_month_hours, 1);
 
     ob_start();
 ?>
@@ -479,20 +490,20 @@ if (!function_exists('stc_my_page_shortcode')) {
                 <?php echo json_encode($monthly_stats); ?>
             </script>
 
-            <div class="stc-stats-grid" id="stc-previous-month-stats">
+            <div class="stc-stats-grid" id="stc-benchmark-month-stats">
                 <div class="stc-stat-item">
-                    <p class="stc-stat-value" id="stc-selected-month-sales">¥<?php echo esc_html($previous_month_sales_formatted); ?></p>
+                    <p class="stc-stat-value" id="stc-benchmark-month-sales">¥<?php echo esc_html($benchmark_month_sales_formatted); ?></p>
                     <span class="stc-stat-label"><?php echo esc_html__('売上', 'sale-time-checker'); ?></span>
                 </div>
                 <div class="stc-stat-item">
-                    <p class="stc-stat-value" id="stc-selected-month-hours"><?php echo esc_html($previous_month_hours_formatted); ?></p>
+                    <p class="stc-stat-value" id="stc-benchmark-month-hours"><?php echo esc_html($benchmark_month_hours_formatted); ?></p>
                     <span class="stc-stat-label"><?php echo esc_html__('累計配信時間', 'sale-time-checker'); ?></span>
                 </div>
             </div>
             
             <p class="stc-monthly-stats-title"><?php echo esc_html__('選択月実績', 'sale-time-checker'); ?></p>
             
-            <div class="stc-stats-grid" id="stc-previous-month-stats">
+            <div class="stc-stats-grid" id="stc-selected-month-stats">
                 <div class="stc-stat-item">
                     <p class="stc-stat-value" id="stc-selected-month-sales">¥<?php echo esc_html($selected_month_sales_formatted); ?></p>
                     <span class="stc-stat-label"><?php echo esc_html__('売上', 'sale-time-checker'); ?></span>

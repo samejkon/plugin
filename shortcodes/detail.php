@@ -50,7 +50,18 @@ if (!function_exists('stc_detail_shortcode')) {
         $before_screenshot = get_post_meta($delivery_id, 'before_screenshot', true);
         $after_screenshot = get_post_meta($delivery_id, 'after_screenshot', true);
         $memo = get_post_meta($delivery_id, 'memo', true);
-        $stream_brand = get_post_meta($delivery_id, 'stream_brand', true);
+        $stream_brand_id = get_post_meta($delivery_id, 'stream_brand', true);
+        // Get brand name from brand ID
+        $stream_brand = '';
+        if (!empty($stream_brand_id)) {
+            $brand_post = get_post($stream_brand_id);
+            if ($brand_post && $brand_post->post_type === 'brands') {
+                $stream_brand = $brand_post->post_title;
+            } else {
+                // Fallback to ID if brand not found
+                $stream_brand = $stream_brand_id;
+            }
+        }
         $stream_result = get_post_meta($delivery_id, 'stream_result', true);
         $stream_factor = get_post_meta($delivery_id, 'stream_factor', true);
         $stream_reason = get_post_meta($delivery_id, 'stream_reason', true);
