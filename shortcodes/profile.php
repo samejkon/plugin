@@ -111,7 +111,32 @@ if (!function_exists('stc_profile_shortcode')) {
             $history_available_years[] = date('Y');
         }
         
-        $back_url = add_query_arg('view', 'rankings', strtok(home_url(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))), '?'));
+        // Prefer browser referer for "戻る" button (do not force history params here).
+        $back_url = '';
+        if (function_exists('wp_get_referer')) {
+            $referer = wp_get_referer();
+            if ($referer) {
+                $home_host = function_exists('wp_parse_url') ? wp_parse_url(home_url(), PHP_URL_HOST) : '';
+                $ref_host = function_exists('wp_parse_url') ? wp_parse_url($referer, PHP_URL_HOST) : '';
+                if (!$home_host || !$ref_host || $home_host === $ref_host) {
+                    // Do not propagate month selection params via "戻る"
+                    if (function_exists('remove_query_arg')) {
+                        $back_url = remove_query_arg(array('history_year', 'history_month'), $referer);
+                    } else {
+                        $back_url = $referer;
+                    }
+                }
+            }
+        }
+
+        // Fallback: back to rankings without month params
+        if (empty($back_url)) {
+            $back_url = add_query_arg(
+                'view',
+                'rankings',
+                strtok(home_url(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))), '?')
+            );
+        }
 
     ob_start();
 ?>
@@ -310,7 +335,16 @@ if (!function_exists('stc_profile_shortcode')) {
                             
                             $formatted_sales = $total_sales ? '¥' . number_format($total_sales) : '¥0';
                             
-                            $detail_url = add_query_arg(array('view' => 'detail', 'id' => $post_id, 'readonly' => '1'), strtok(home_url(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))), '?'));
+                            $detail_url = add_query_arg(
+                                array(
+                                    'view' => 'detail',
+                                    'id' => $post_id,
+                                    'readonly' => '1',
+                                    'history_year' => $selected_year,
+                                    'history_month' => $selected_month,
+                                ),
+                                strtok(home_url(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))), '?')
+                            );
                             ?>
                             <div class="stc-history-item">
                                 <div class="stc-history-start">
